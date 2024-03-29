@@ -23,7 +23,7 @@ export class AcmsStack extends Stack {
     /***********************************************************************
      *    Create codepipeline for the project using github as code source.
      ***********************************************************************/
-    const pipeline = new CodePipeline(this, "Weather-api-Pipeline", {
+    const pipeline = new CodePipeline(this, "acms-pipeline", {
       synth: new ShellStep("synth", {
         input: CodePipelineSource.gitHub(
           "vernyuy/apartment-management-complex",
