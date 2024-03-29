@@ -1,16 +1,64 @@
-import * as cdk from 'aws-cdk-lib';
-import { Construct } from 'constructs';
-// import * as sqs from 'aws-cdk-lib/aws-sqs';
+import { CfnOutput, RemovalPolicy, Stack, StackProps } from "aws-cdk-lib";
+import { Construct } from "constructs";
+import {
+  CfnDataSource,
+  CfnGraphQLApi,
+  CfnGraphQLSchema,
+} from "aws-cdk-lib/aws-appsync";
+import * as iam from "aws-cdk-lib/aws-iam";
+import { PipelineStage } from "./pipeline-stage";
+import {
+  CodePipeline,
+  ShellStep,
+  CodePipelineSource,
+  CodeBuildStep,
+  ManualApprovalStep,
+} from "aws-cdk-lib/pipelines";
 
-export class AcmsStack extends cdk.Stack {
-  constructor(scope: Construct, id: string, props?: cdk.StackProps) {
+export class AcmsStack extends Stack {
+
+  constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
 
-    // The code that defines your stack goes here
+    /***********************************************************************
+     *    Create codepipeline for the project using github as code source.
+     ***********************************************************************/
+    const pipeline = new CodePipeline(this, "Weather-api-Pipeline", {
+      synth: new ShellStep("synth", {
+        input: CodePipelineSource.gitHub(
+          "vernyuy/apartment-management-complex",
+          "main"
+        ),
+        commands: ["npm ci", "npm run build", "npx cdk synth"],
+      }),
+    });
 
-    // example resource
-    // const queue = new sqs.Queue(this, 'AcmsQueue', {
-    //   visibilityTimeout: cdk.Duration.seconds(300)
-    // });
+    /*********************************
+     *    Add test stage
+     *********************************/
+    // const devStage = pipeline.addStage(
+    //   new PipelineStage(this, "PipelineDevStage", {
+    //     stageName: "dev",
+    //   })
+    // );
+
+    // const prodStage = pipeline.addStage(
+    //   new PipelineStage(this, "PipelineProdStage", {
+    //     stageName: "prod",
+    //   })
+    // );
+
+    /*****************************************************
+     *    Authomate unit test within the stage
+     *****************************************************/
+    // devStage.addPre(
+    //   new CodeBuildStep("unit test", {
+    //     commands: ["npm ci", "npm run test"],
+    //   })
+    // );
+
+    // devStage.addPost(
+    //   new ManualApprovalStep("Manual aproval before production")
+    // );
   }
 }
