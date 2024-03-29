@@ -11,9 +11,7 @@ export class PipelineStage extends Stage {
   constructor(scope: Construct, id: string, props: StageProps) {
     super(scope, id, props);
 
-    new AcmsSharedStack(this, "AcmsStack", {
-      env: { account: "132260253285", region: "us-east-1" },
-    });
+    new AcmsSharedStack(this, "AcmsStack");
 
     // new UserLamdaStacks(this, "UserLambdaStacks", {
     //   env: { account: "132260253285", region: "us-east-1" },
