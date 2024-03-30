@@ -1,0 +1,25 @@
+ 
+ #set($pk = $util.dynamodb.toStringJson("APARTMENT#${ctx.prev.result.apartmentId}"))
+ #set($sk =$util.dynamodb.toStringJson("BOOKING#"))
+{
+    "version" : "2018-05-29",
+
+    "operation" : "Query",
+    "limit": $util.toJson($limit),
+    "nextToken": $util.toJson($ctx.args.nextToken),
+    "query" : {
+        "expression": "#PK = :pk and begins_with(#SK,:sk)",
+        "expressionNames":{
+        "#PK":"PK",
+        "#SK":"SK"
+        },
+        
+        "expressionValues" : {
+            ":pk" : $pk,
+            ":sk" :$sk
+        }
+    },
+    "scanIndexForward" : true
+
+
+}

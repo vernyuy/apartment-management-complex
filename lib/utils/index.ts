@@ -1,4 +1,4 @@
-import ksuid from "ksuid";
+import KSUID = require("ksuid");
 export const uuid = (): string => {
-  return ksuid.randomSync().string;
+  return KSUID.randomSync().string;
 };
