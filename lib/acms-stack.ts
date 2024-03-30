@@ -1,11 +1,5 @@
 import { CfnOutput, RemovalPolicy, Stack, StackProps } from "aws-cdk-lib";
 import { Construct } from "constructs";
-import {
-  CfnDataSource,
-  CfnGraphQLApi,
-  CfnGraphQLSchema,
-} from "aws-cdk-lib/aws-appsync";
-import * as iam from "aws-cdk-lib/aws-iam";
 import { PipelineStage } from "./pipeline-stage";
 import {
   CodePipeline,

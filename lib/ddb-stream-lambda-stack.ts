@@ -14,6 +14,7 @@ import * as path from "path";
 import { NodejsFunction } from "aws-cdk-lib/aws-lambda-nodejs";
 import * as sqs from "aws-cdk-lib/aws-sqs";
 import { Tracing } from "aws-cdk-lib/aws-lambda";
+import * as appsync from "aws-cdk-lib/aws-appsync"
 
 import {
   DynamoEventSource,
@@ -21,7 +22,7 @@ import {
 } from "aws-cdk-lib/aws-lambda-event-sources";
 
 interface DdbStreamLambdaStackProps extends StackProps {
-  acmsGraphqlApi: CfnGraphQLApi;
+  acmsGraphqlApi: appsync.GraphqlApi;
   apiSchema: CfnGraphQLSchema;
   acmsDatabase: Table;
 }

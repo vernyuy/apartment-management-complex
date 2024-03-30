@@ -15,33 +15,28 @@ export class PipelineStage extends Stage {
 
     new UserLamdaStacks(this, "UserLambdaStacks", {
       acmsDatabase: acmsStack.acmsDatabase,
-      apiSchema: acmsStack.apiSchema,
       acmsGraphqlApi: acmsStack.acmsGraphqlApi,
     });
 
     new BuildingLamdaStacks(this, "BuildingLambdaStacks", {
       acmsDatabase: acmsStack.acmsDatabase,
-      apiSchema: acmsStack.apiSchema,
       acmsGraphqlApi: acmsStack.acmsGraphqlApi,
     });
 
     new ApartmentLamdaStacks(this, "ApartmentLambdaStacks", {
       acmsDatabase: acmsStack.acmsDatabase,
-      apiSchema: acmsStack.apiSchema,
       acmsGraphqlApi: acmsStack.acmsGraphqlApi,
     });
 
-    new BookingLamdaStacks(this, "BookingLambdaStacks", {
-      acmsDatabase: acmsStack.acmsDatabase,
-      apiSchema: acmsStack.apiSchema,
-      acmsGraphqlApi: acmsStack.acmsGraphqlApi,
-      acmsTableDatasource: acmsStack.acmsTableDatasource,
-    });
+    // new BookingLamdaStacks(this, "BookingLambdaStacks", {
+    //   acmsDatabase: acmsStack.acmsDatabase,
+    //   acmsGraphqlApi: acmsStack.acmsGraphqlApi,
+    //   acmsTableDatasource: acmsStack.acmsTableDatasource,
+    // });
 
-    new DdbStreamLamdaStacks(this, "DdbStreamLambdaStacks", {
-      acmsDatabase: acmsStack.acmsDatabase,
-      apiSchema: acmsStack.apiSchema,
-      acmsGraphqlApi: acmsStack.acmsGraphqlApi,
-    });
+    // new DdbStreamLamdaStacks(this, "DdbStreamLambdaStacks", {
+    //   acmsDatabase: acmsStack.acmsDatabase,
+    //   acmsGraphqlApi: acmsStack.acmsGraphqlApi,
+    // });
   }
 }

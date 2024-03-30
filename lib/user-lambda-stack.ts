@@ -1,88 +1,40 @@
 import { Stack, StackProps } from "aws-cdk-lib";
-import {
-  CfnDataSource,
-  CfnGraphQLApi,
-  CfnGraphQLSchema,
-  CfnResolver,
-} from "aws-cdk-lib/aws-appsync";
-import * as signer from "aws-cdk-lib/aws-signer";
 import { Table } from "aws-cdk-lib/aws-dynamodb";
-import { ManagedPolicy, Role, ServicePrincipal } from "aws-cdk-lib/aws-iam";
-import * as lambda from "aws-cdk-lib/aws-lambda";
 import { Construct } from "constructs";
-import * as path from "path";
-import { NodejsFunction } from "aws-cdk-lib/aws-lambda-nodejs";
-import { Tracing } from "aws-cdk-lib/aws-lambda";
+import { join } from "path";
+import * as appsync from "aws-cdk-lib/aws-appsync";
+import { bundleAppSyncResolver } from "./helpers";
 
 interface UserLambdaStackProps extends StackProps {
-  acmsGraphqlApi: CfnGraphQLApi;
-  apiSchema: CfnGraphQLSchema;
+  acmsGraphqlApi: appsync.GraphqlApi;
   acmsDatabase: Table;
 }
 export class UserLamdaStacks extends Stack {
   constructor(scope: Construct, id: string, props: UserLambdaStackProps) {
     super(scope, id, props);
 
-    const { acmsDatabase, acmsGraphqlApi, apiSchema } = props;
-    const signingProfile = new signer.SigningProfile(this, "SigningProfile", {
-      platform: signer.Platform.AWS_LAMBDA_SHA384_ECDSA,
+    const { acmsDatabase, acmsGraphqlApi } = props;
+
+    const acmsUserFunction = new appsync.AppsyncFunction(this, "createUser", {
+      name: "createUser",
+      api: acmsGraphqlApi,
+      dataSource: acmsGraphqlApi.addDynamoDbDataSource(
+        "acmsDatabase",
+        acmsDatabase
+      ),
+      code: bundleAppSyncResolver("src/resolvers/user/createUser.ts"),
+      runtime: appsync.FunctionRuntime.JS_1_0_0,
     });
 
-    const codeSigningConfig = new lambda.CodeSigningConfig(
-      this,
-      "CodeSigningConfig",
-      {
-        signingProfiles: [signingProfile],
-      }
-    );
-    const acmsLambda = new NodejsFunction(this, "AcmsUserHandler", {
-      tracing: Tracing.ACTIVE,
-      codeSigningConfig,
-      runtime: lambda.Runtime.NODEJS_16_X,
-      handler: "handler",
-      entry: path.join(__dirname, "lambda-fns/user", "main.ts"),
-
-      memorySize: 1024,
+    new appsync.Resolver(this, "createUserResolver", {
+      api: acmsGraphqlApi,
+      typeName: "Mutation",
+      fieldName: "createUser",
+      code: appsync.Code.fromAsset(
+        join(__dirname, "./js_resolvers/_before_and_after_mapping_template.js")
+      ),
+      runtime: appsync.FunctionRuntime.JS_1_0_0,
+      pipelineConfig: [acmsUserFunction],
     });
-    acmsLambda.role?.addManagedPolicy(
-      ManagedPolicy.fromAwsManagedPolicyName(
-        "service-role/AWSAppSyncPushToCloudWatchLogs"
-      )
-    );
-
-    const appsyncLambdaRole = new Role(this, "LambdaRole", {
-      assumedBy: new ServicePrincipal("appsync.amazonaws.com"),
-    });
-    appsyncLambdaRole.addManagedPolicy(
-      ManagedPolicy.fromAwsManagedPolicyName("AWSLambda_FullAccess")
-    );
-    const lambdaDataSources: CfnDataSource = new CfnDataSource(
-      this,
-      "ACMSLambdaDatasource",
-      {
-        apiId: acmsGraphqlApi.attrApiId,
-        name: "ACMSLambdaDatasource",
-        type: "AWS_LAMBDA",
-
-        lambdaConfig: {
-          lambdaFunctionArn: acmsLambda.functionArn,
-        },
-        serviceRoleArn: appsyncLambdaRole.roleArn,
-      }
-    );
-
-    const createUserAccountResolver: CfnResolver = new CfnResolver(
-      this,
-      "createUserAccountResolver",
-      {
-        apiId: acmsGraphqlApi.attrApiId,
-        typeName: "Mutation",
-        fieldName: "createUserAccount",
-        dataSourceName: lambdaDataSources.attrName,
-      }
-    );
-    createUserAccountResolver.addDependsOn(apiSchema);
-    acmsDatabase.grantFullAccess(acmsLambda);
-    acmsLambda.addEnvironment("ACMS_DB", acmsDatabase.tableName);
   }
 }

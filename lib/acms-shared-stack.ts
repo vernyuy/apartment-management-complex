@@ -2,12 +2,8 @@ import { CfnOutput, RemovalPolicy, Stack, StackProps } from "aws-cdk-lib";
 import { Construct } from "constructs";
 import * as cognito from "aws-cdk-lib/aws-cognito";
 import { UserPool, UserPoolClient } from "aws-cdk-lib/aws-cognito";
+import * as appsync from "aws-cdk-lib/aws-appsync";
 
-import {
-  CfnDataSource,
-  CfnGraphQLApi,
-  CfnGraphQLSchema,
-} from "aws-cdk-lib/aws-appsync";
 import * as iam from "aws-cdk-lib/aws-iam";
 import {
   AttributeType,
@@ -19,12 +15,10 @@ import {
 import { readFileSync } from "fs";
 import { ManagedPolicy, Role, ServicePrincipal } from "aws-cdk-lib/aws-iam";
 
-
 export class AcmsSharedStack extends Stack {
   public readonly acmsDatabase: Table;
-  public readonly acmsGraphqlApi: CfnGraphQLApi;
-  public readonly apiSchema: CfnGraphQLSchema;
-  public readonly acmsTableDatasource: CfnDataSource;
+  public readonly acmsGraphqlApi: appsync.GraphqlApi;
+  public readonly acmsTableDatasource: appsync.DataSourceOptions;
 
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
@@ -86,41 +80,31 @@ export class AcmsSharedStack extends Stack {
     /**
      * GraphQL API
      */
-    this.acmsGraphqlApi = new CfnGraphQLApi(this, "acmsGraphqlApi", {
-      name: "ACMS",
-      authenticationType: "API_KEY",
-
-      additionalAuthenticationProviders: [
-        {
-          authenticationType: "AMAZON_COGNITO_USER_POOLS",
-
-          userPoolConfig: {
-            userPoolId: userPool.userPoolId,
-            awsRegion: "us-east-2",
-          },
+    this.acmsGraphqlApi = new appsync.GraphqlApi(this, "Api", {
+      name: "apartment-complex-management",
+      schema: appsync.SchemaFile.fromAsset("schema/schema.graphql"),
+      authorizationConfig: {
+        defaultAuthorization: {
+          authorizationType: appsync.AuthorizationType.API_KEY,
         },
-      ],
-      userPoolConfig: {
-        userPoolId: userPool.userPoolId,
-        defaultAction: "ALLOW",
-        awsRegion: "us-east-2",
-      },
 
-      logConfig: {
-        fieldLogLevel: "ALL",
-        cloudWatchLogsRoleArn: cloudWatchRole.roleArn,
+        additionalAuthorizationModes: [
+          {
+            authorizationType: appsync.AuthorizationType.USER_POOL,
+            userPoolConfig: {
+              userPool,
+            },
+          },
+        ],
       },
       xrayEnabled: true,
+      logConfig: {
+        fieldLogLevel: appsync.FieldLogLevel.ALL,
+      },
     });
 
-    /**
-     * Graphql Schema
-     */
-
-    this.apiSchema = new CfnGraphQLSchema(this, "ACMSGraphqlApiSchema", {
-      apiId: this.acmsGraphqlApi.attrApiId,
-      definition: readFileSync("./schema/schema.graphql").toString(),
-    });
+    //   definition: readFileSync("./schema/schema.graphql").toString(),
+    // });
 
     /**
      * Database
@@ -158,20 +142,8 @@ export class AcmsSharedStack extends Stack {
       projectionType: ProjectionType.ALL,
     });
 
-    this.acmsTableDatasource = new CfnDataSource(
-      this,
-      "AcmsDynamoDBTableDataSource",
-      {
-        apiId: this.acmsGraphqlApi.attrApiId,
-        name: "AcmsDynamoDBTableDataSource",
-        type: "AMAZON_DYNAMODB",
-        dynamoDbConfig: {
-          tableName: this.acmsDatabase.tableName,
-          awsRegion: this.region,
-        },
-        serviceRoleArn: dynamoDBRole.roleArn,
-      }
-    );
+    this.acmsTableDatasource = this.acmsGraphqlApi.addDynamoDbDataSource('postDataSource', this.acmsDatabase);
+
 
     /**
      * Outputs
@@ -185,11 +157,11 @@ export class AcmsSharedStack extends Stack {
     });
 
     new CfnOutput(this, "GraphQLAPI ID", {
-      value: this.acmsGraphqlApi.attrApiId,
+      value: this.acmsGraphqlApi.apiId!,
     });
 
     new CfnOutput(this, "GraphQLAPI URL", {
-      value: this.acmsGraphqlApi.attrGraphQlUrl,
+      value: this.acmsGraphqlApi.graphqlUrl,
     });
   }
 }

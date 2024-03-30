@@ -13,10 +13,12 @@ import { Construct } from "constructs";
 import * as path from "path";
 import { NodejsFunction } from "aws-cdk-lib/aws-lambda-nodejs";
 import { Tracing } from "aws-cdk-lib/aws-lambda";
+import * as appsync from "aws-cdk-lib/aws-appsync";
+import { bundleAppSyncResolver } from "./helpers";
+import { join } from "path";
 
 interface BuildingLambdaStackProps extends StackProps {
-  acmsGraphqlApi: CfnGraphQLApi;
-  apiSchema: CfnGraphQLSchema;
+  acmsGraphqlApi: appsync.GraphqlApi;
   acmsDatabase: Table;
 }
 
@@ -24,67 +26,33 @@ export class BuildingLamdaStacks extends Stack {
   constructor(scope: Construct, id: string, props: BuildingLambdaStackProps) {
     super(scope, id, props);
 
-    const { acmsDatabase, acmsGraphqlApi, apiSchema } = props;
-    const signingProfile = new signer.SigningProfile(this, "SigningProfile", {
-      platform: signer.Platform.AWS_LAMBDA_SHA384_ECDSA,
-    });
+    const { acmsDatabase, acmsGraphqlApi } = props;
 
-    const codeSigningConfig = new lambda.CodeSigningConfig(
+    const buildingFunction = new appsync.AppsyncFunction(
       this,
-      "CodeSigningConfig",
+      "createBuilding",
       {
-        signingProfiles: [signingProfile],
+        name: "createBuilding",
+        api: acmsGraphqlApi,
+        dataSource: acmsGraphqlApi.addDynamoDbDataSource(
+          "acmsDatabase",
+          acmsDatabase
+        ),
+        code: bundleAppSyncResolver("src/resolvers/building/createBuilding.ts"),
+        runtime: appsync.FunctionRuntime.JS_1_0_0,
       }
     );
 
-    const buildingLambda = new NodejsFunction(this, "AcmsBuildingHandler", {
-      tracing: Tracing.ACTIVE,
-      codeSigningConfig,
-      runtime: lambda.Runtime.NODEJS_16_X,
-      handler: "handler",
-      entry: path.join(__dirname, "lambda-fns/building", "app.ts"),
-
-      memorySize: 1024,
+    new appsync.Resolver(this, "createBuildingResolver", {
+      api: acmsGraphqlApi,
+      typeName: "Mutation",
+      fieldName: "createBuilding",
+      code: appsync.Code.fromAsset(
+        join(__dirname, "./js_resolvers/_before_and_after_mapping_template.js")
+      ),
+      runtime: appsync.FunctionRuntime.JS_1_0_0,
+      pipelineConfig: [buildingFunction],
     });
-    buildingLambda.role?.addManagedPolicy(
-      ManagedPolicy.fromAwsManagedPolicyName(
-        "service-role/AWSAppSyncPushToCloudWatchLogs"
-      )
-    );
 
-    const appsyncLambdaRole = new Role(this, "LambdaRole", {
-      assumedBy: new ServicePrincipal("appsync.amazonaws.com"),
-    });
-    appsyncLambdaRole.addManagedPolicy(
-      ManagedPolicy.fromAwsManagedPolicyName("AWSLambda_FullAccess")
-    );
-    const lambdaDataSources: CfnDataSource = new CfnDataSource(
-      this,
-      "ACMSBuildingLambdaDatasource",
-      {
-        apiId: acmsGraphqlApi.attrApiId,
-        name: "ACMSBuildingLambdaDatasource",
-        type: "AWS_LAMBDA",
-
-        lambdaConfig: {
-          lambdaFunctionArn: buildingLambda.functionArn,
-        },
-        serviceRoleArn: appsyncLambdaRole.roleArn,
-      }
-    );
-
-    const createBuildingResolver: CfnResolver = new CfnResolver(
-      this,
-      "createBuildingResolver",
-      {
-        apiId: acmsGraphqlApi.attrApiId,
-        typeName: "Mutation",
-        fieldName: "createBuilding",
-        dataSourceName: lambdaDataSources.attrName,
-      }
-    );
-    createBuildingResolver.addDependsOn(apiSchema);
-    acmsDatabase.grantFullAccess(buildingLambda);
-    buildingLambda.addEnvironment("ACMS_DB", acmsDatabase.tableName);
   }
 }
