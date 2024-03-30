@@ -23,7 +23,7 @@ export class ApartmentLamdaStacks extends Stack {
         name: "createApartment",
         api: acmsGraphqlApi,
         dataSource: acmsGraphqlApi.addDynamoDbDataSource(
-          "acmsDatabase",
+          "createApartment",
           acmsDatabase
         ),
         code: bundleAppSyncResolver("src/resolvers/apartment/createApartment.ts"),
