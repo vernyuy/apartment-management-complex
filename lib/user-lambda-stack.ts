@@ -15,11 +15,11 @@ export class UserLamdaStacks extends Stack {
 
     const { acmsDatabase, acmsGraphqlApi } = props;
 
-    const acmsUserFunction = new appsync.AppsyncFunction(this, "createUser", {
-      name: "createUser",
+    const acmsUserFunction = new appsync.AppsyncFunction(this, "createUserAccount", {
+      name: "createUserAccount",
       api: acmsGraphqlApi,
       dataSource: acmsGraphqlApi.addDynamoDbDataSource(
-        "acmsDatabase",
+        "createUserAccount",
         acmsDatabase
       ),
       code: bundleAppSyncResolver("src/resolvers/user/createUserAccount.ts"),
@@ -29,7 +29,7 @@ export class UserLamdaStacks extends Stack {
     new appsync.Resolver(this, "createUserResolver", {
       api: acmsGraphqlApi,
       typeName: "Mutation",
-      fieldName: "createUser",
+      fieldName: "createUserAccount",
       code: appsync.Code.fromAsset(
         join(__dirname, "./js_resolvers/_before_and_after_mapping_template.js")
       ),
