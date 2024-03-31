@@ -10,7 +10,7 @@ async function createApartmentBooking(
 ): Promise<boolean> {
   const documentClient = new DynamoDB.DocumentClient();
   let tableName = process.env.ACMS_DB;
-  let BOOKING_QUEUE_URL = process.env.BOOKING_QUEUE_URL;
+  const BOOKING_QUEUE_URL = process.env.BOOKING_QUEUE_URL;
   const createdOn = Date.now().toString();
   const id: string = uuid();
   const sqs = new SQS();
@@ -56,7 +56,7 @@ async function createApartmentBooking(
     if (response.Count <= 0) {
       logger.info(`sqs pre message ${JSON.stringify(bookingInput.toItem())}`);
       logger.info(`sqs  queue url ${BOOKING_QUEUE_URL}`);
-      var sqsParams: SQS.Types.SendMessageRequest = {
+      const sqsParams: SQS.Types.SendMessageRequest = {
         MessageBody: JSON.stringify(bookingInput.toItem()),
         QueueUrl: BOOKING_QUEUE_URL,
       };

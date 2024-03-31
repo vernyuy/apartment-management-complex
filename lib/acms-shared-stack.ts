@@ -12,13 +12,12 @@ import {
   StreamViewType,
   Table,
 } from "aws-cdk-lib/aws-dynamodb";
-import { readFileSync } from "fs";
 import { ManagedPolicy, Role, ServicePrincipal } from "aws-cdk-lib/aws-iam";
 
 export class AcmsSharedStack extends Stack {
   public readonly acmsDatabase: Table;
   public readonly acmsGraphqlApi: appsync.GraphqlApi;
-  public readonly acmsTableDatasource: appsync.DataSourceOptions;
+  // public readonly acmsTableDatasource: appsync.DataSourceOptions;
 
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
@@ -142,7 +141,7 @@ export class AcmsSharedStack extends Stack {
       projectionType: ProjectionType.ALL,
     });
 
-    this.acmsTableDatasource = this.acmsGraphqlApi.addDynamoDbDataSource('postDataSource', this.acmsDatabase);
+    // this.acmsTableDatasource = this.acmsGraphqlApi.addDynamoDbDataSource('postDataSource', this.acmsDatabase);
 
 
     /**

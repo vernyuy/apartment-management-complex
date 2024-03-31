@@ -3,7 +3,7 @@ import { createItem } from "../../lib/helpers";
 import { MutationCreateApartmentArgs, Apartment } from "../../types/appsync";
 
 export function request(
-  ctx: Context<MutationCreateApartmentArgs>
+  ctx: Context<MutationCreateApartmentArgs>,
 ): DynamoDBPutItemRequest {
   // add timestamps
   const item = createItem(ctx.args.input!);
@@ -23,7 +23,7 @@ export function request(
 }
 
 export function response(
-  ctx: Context<MutationCreateApartmentArgs, object, object, object, Apartment>
+  ctx: Context<MutationCreateApartmentArgs, object, object, object, Apartment>,
 ) {
   return ctx.result;
 }
