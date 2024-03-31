@@ -1,5 +1,5 @@
 import { Logger } from "@aws-lambda-powertools/logger";
-import { AWSError, DynamoDB, SQS } from "aws-sdk";
+import {  DynamoDB, SQS } from "aws-sdk";
 import { uuid } from "../../utils";
 import CreateBookingInput from "./CreateBookingInput";
 import { BookingEntity } from "./entities/bookingEntity";
