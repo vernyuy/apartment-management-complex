@@ -45,13 +45,13 @@ export class AcmsSharedStack extends Stack {
         },
       }
     );
-    const dynamoDBRole = new Role(this, "DynamoDBRole", {
-      assumedBy: new ServicePrincipal("appsync.amazonaws.com"),
-    });
+    // const dynamoDBRole = new Role(this, "DynamoDBRole", {
+    //   assumedBy: new ServicePrincipal("appsync.amazonaws.com"),
+    // });
 
-    dynamoDBRole.addManagedPolicy(
-      ManagedPolicy.fromAwsManagedPolicyName("AmazonDynamoDBFullAccess")
-    );
+    // dynamoDBRole.addManagedPolicy(
+    //   ManagedPolicy.fromAwsManagedPolicyName("AmazonDynamoDBFullAccess")
+    // );
 
     const userPoolClient: UserPoolClient = new cognito.UserPoolClient(
       this,
@@ -61,106 +61,106 @@ export class AcmsSharedStack extends Stack {
       }
     );
 
-    /**
-     * CloudWatch Role
-     */
-    // give appsync permission to log to cloudwatch by assigning a role
+    // /**
+    //  * CloudWatch Role
+    //  */
+    // // give appsync permission to log to cloudwatch by assigning a role
 
-    const cloudWatchRole = new iam.Role(this, "appSyncCloudWatchLogs", {
-      assumedBy: new iam.ServicePrincipal("appsync.amazonaws.com"),
-    });
-
-    cloudWatchRole.addManagedPolicy(
-      iam.ManagedPolicy.fromAwsManagedPolicyName(
-        "service-role/AWSAppSyncPushToCloudWatchLogs"
-      )
-    );
-
-    /**
-     * GraphQL API
-     */
-    this.acmsGraphqlApi = new appsync.GraphqlApi(this, "Api", {
-      name: "apartment-complex-management",
-      schema: appsync.SchemaFile.fromAsset("schema/schema.graphql"),
-      authorizationConfig: {
-        defaultAuthorization: {
-          authorizationType: appsync.AuthorizationType.API_KEY,
-        },
-
-        additionalAuthorizationModes: [
-          {
-            authorizationType: appsync.AuthorizationType.USER_POOL,
-            userPoolConfig: {
-              userPool,
-            },
-          },
-        ],
-      },
-      xrayEnabled: true,
-      logConfig: {
-        fieldLogLevel: appsync.FieldLogLevel.ALL,
-      },
-    });
-
-    //   definition: readFileSync("./schema/schema.graphql").toString(),
+    // const cloudWatchRole = new iam.Role(this, "appSyncCloudWatchLogs", {
+    //   assumedBy: new iam.ServicePrincipal("appsync.amazonaws.com"),
     // });
 
-    /**
-     * Database
-     */
+    // cloudWatchRole.addManagedPolicy(
+    //   iam.ManagedPolicy.fromAwsManagedPolicyName(
+    //     "service-role/AWSAppSyncPushToCloudWatchLogs"
+    //   )
+    // );
 
-    this.acmsDatabase = new Table(this, "ACMSDynamoDbTable", {
-      tableName: "AcmsDynamoDBTable",
+    // /**
+    //  * GraphQL API
+    //  */
+    // this.acmsGraphqlApi = new appsync.GraphqlApi(this, "Api", {
+    //   name: "apartment-complex-management",
+    //   schema: appsync.SchemaFile.fromAsset("schema/schema.graphql"),
+    //   authorizationConfig: {
+    //     defaultAuthorization: {
+    //       authorizationType: appsync.AuthorizationType.API_KEY,
+    //     },
 
-      partitionKey: {
-        name: "PK",
-        type: AttributeType.STRING,
-      },
-      sortKey: {
-        name: "SK",
-        type: AttributeType.STRING,
-      },
+    //     additionalAuthorizationModes: [
+    //       {
+    //         authorizationType: appsync.AuthorizationType.USER_POOL,
+    //         userPoolConfig: {
+    //           userPool,
+    //         },
+    //       },
+    //     ],
+    //   },
+    //   xrayEnabled: true,
+    //   logConfig: {
+    //     fieldLogLevel: appsync.FieldLogLevel.ALL,
+    //   },
+    // });
 
-      billingMode: BillingMode.PAY_PER_REQUEST,
-      stream: StreamViewType.NEW_IMAGE,
+    // //   definition: readFileSync("./schema/schema.graphql").toString(),
+    // // });
 
-      removalPolicy: RemovalPolicy.DESTROY,
-    });
+    // /**
+    //  * Database
+    //  */
 
-    this.acmsDatabase.addGlobalSecondaryIndex({
-      indexName: "getAllApartmentsPerUser",
-      partitionKey: {
-        name: "GSI1PK",
-        type: AttributeType.STRING,
-      },
-      sortKey: {
-        name: "GSI1SK",
-        type: AttributeType.STRING,
-      },
+    // this.acmsDatabase = new Table(this, "ACMSDynamoDbTable", {
+    //   tableName: "AcmsDynamoDBTable",
 
-      projectionType: ProjectionType.ALL,
-    });
+    //   partitionKey: {
+    //     name: "PK",
+    //     type: AttributeType.STRING,
+    //   },
+    //   sortKey: {
+    //     name: "SK",
+    //     type: AttributeType.STRING,
+    //   },
 
-    // this.acmsTableDatasource = this.acmsGraphqlApi.addDynamoDbDataSource('postDataSource', this.acmsDatabase);
+    //   billingMode: BillingMode.PAY_PER_REQUEST,
+    //   stream: StreamViewType.NEW_IMAGE,
+
+    //   removalPolicy: RemovalPolicy.DESTROY,
+    // });
+
+    // this.acmsDatabase.addGlobalSecondaryIndex({
+    //   indexName: "getAllApartmentsPerUser",
+    //   partitionKey: {
+    //     name: "GSI1PK",
+    //     type: AttributeType.STRING,
+    //   },
+    //   sortKey: {
+    //     name: "GSI1SK",
+    //     type: AttributeType.STRING,
+    //   },
+
+    //   projectionType: ProjectionType.ALL,
+    // });
+
+    // // this.acmsTableDatasource = this.acmsGraphqlApi.addDynamoDbDataSource('postDataSource', this.acmsDatabase);
 
 
-    /**
-     * Outputs
-     */
+    // /**
+    //  * Outputs
+    //  */
 
-    new CfnOutput(this, "UserPoolId", {
-      value: userPool.userPoolId,
-    });
-    new CfnOutput(this, "UserPoolClientId", {
-      value: userPoolClient.userPoolClientId,
-    });
+    // new CfnOutput(this, "UserPoolId", {
+    //   value: userPool.userPoolId,
+    // });
+    // new CfnOutput(this, "UserPoolClientId", {
+    //   value: userPoolClient.userPoolClientId,
+    // });
 
-    new CfnOutput(this, "GraphQLAPI ID", {
-      value: this.acmsGraphqlApi.apiId!,
-    });
+    // new CfnOutput(this, "GraphQLAPI ID", {
+    //   value: this.acmsGraphqlApi.apiId!,
+    // });
 
-    new CfnOutput(this, "GraphQLAPI URL", {
-      value: this.acmsGraphqlApi.graphqlUrl,
-    });
+    // new CfnOutput(this, "GraphQLAPI URL", {
+    //   value: this.acmsGraphqlApi.graphqlUrl,
+    // });
   }
 }
