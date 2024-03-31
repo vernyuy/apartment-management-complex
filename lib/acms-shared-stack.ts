@@ -15,8 +15,8 @@ import {
 import { ManagedPolicy, Role, ServicePrincipal } from "aws-cdk-lib/aws-iam";
 
 export class AcmsSharedStack extends Stack {
-  public readonly acmsDatabase: Table;
-  public readonly acmsGraphqlApi: appsync.GraphqlApi;
+  // public readonly acmsDatabase: Table;
+  // public readonly acmsGraphqlApi: appsync.GraphqlApi;
   // public readonly acmsTableDatasource: appsync.DataSourceOptions;
 
   constructor(scope: Construct, id: string, props?: StackProps) {
@@ -25,26 +25,26 @@ export class AcmsSharedStack extends Stack {
     /**
      * UserPool and UserPool Client
      */
-    const userPool: UserPool = new cognito.UserPool(
-      this,
-      "ACMSCognitoUserPool",
-      {
-        selfSignUpEnabled: true,
-        accountRecovery: cognito.AccountRecovery.PHONE_AND_EMAIL,
-        userVerification: {
-          emailStyle: cognito.VerificationEmailStyle.CODE,
-        },
-        autoVerify: {
-          email: true,
-        },
-        standardAttributes: {
-          email: {
-            required: true,
-            mutable: true,
-          },
-        },
-      }
-    );
+    // const userPool: UserPool = new cognito.UserPool(
+    //   this,
+    //   "ACMSCognitoUserPool",
+    //   {
+    //     selfSignUpEnabled: true,
+    //     accountRecovery: cognito.AccountRecovery.PHONE_AND_EMAIL,
+    //     userVerification: {
+    //       emailStyle: cognito.VerificationEmailStyle.CODE,
+    //     },
+    //     autoVerify: {
+    //       email: true,
+    //     },
+    //     standardAttributes: {
+    //       email: {
+    //         required: true,
+    //         mutable: true,
+    //       },
+    //     },
+    //   }
+    // );
     // const dynamoDBRole = new Role(this, "DynamoDBRole", {
     //   assumedBy: new ServicePrincipal("appsync.amazonaws.com"),
     // });
@@ -53,13 +53,13 @@ export class AcmsSharedStack extends Stack {
     //   ManagedPolicy.fromAwsManagedPolicyName("AmazonDynamoDBFullAccess")
     // );
 
-    const userPoolClient: UserPoolClient = new cognito.UserPoolClient(
-      this,
-      "ACMSUserPoolClient",
-      {
-        userPool,
-      }
-    );
+    // const userPoolClient: UserPoolClient = new cognito.UserPoolClient(
+    //   this,
+    //   "ACMSUserPoolClient",
+    //   {
+    //     userPool,
+    //   }
+    // );
 
     // /**
     //  * CloudWatch Role
