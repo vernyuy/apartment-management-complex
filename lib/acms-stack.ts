@@ -30,11 +30,11 @@ export class AcmsStack extends Stack {
     /*********************************
      *    Add test stage
      *********************************/
-    const devStage = pipeline.addStage(
-      new PipelineStage(this, "PipelineDevStage", {
-        stageName: "dev",
-      })
-    );
+    // const devStage = pipeline.addStage(
+    //   new PipelineStage(this, "PipelineDevStage", {
+    //     stageName: "dev",
+    //   })
+    // );
 
     // const prodStage = pipeline.addStage(
     //   new PipelineStage(this, "PipelineProdStage", {
@@ -51,8 +51,8 @@ export class AcmsStack extends Stack {
     //   })
     // );
 
-    devStage.addPost(
-      new ManualApprovalStep("Manual aproval before production")
-    );
+    // devStage.addPost(
+    //   new ManualApprovalStep("Manual aproval before production")
+    // );
   }
 }

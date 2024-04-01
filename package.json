@@ -12,6 +12,7 @@
     "codegen": "graphql-codegen"
   },
   "devDependencies": {
+    "@baselime/cdk": "^0.0.46",
     "@types/jest": "^29.5.8",
     "@types/node": "20.9.1",
     "aws-cdk": "2.114.1",
