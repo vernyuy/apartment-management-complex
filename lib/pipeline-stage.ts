@@ -11,12 +11,12 @@ export class PipelineStage extends Stage {
   constructor(scope: Construct, id: string, props: StageProps) {
     super(scope, id, props);
 
-    new AcmsSharedStack(this, "AcmsSharedStack");
+    const acmsSharedStack = new AcmsSharedStack(this, "AcmsSharedStack");
 
-    // new UserLamdaStacks(this, "UserLambdaStacks", {
-    //   acmsDatabase: acmsStack.acmsDatabase,
-    //   acmsGraphqlApi: acmsStack.acmsGraphqlApi,
-    // });
+    new UserLamdaStacks(this, "UserLambdaStacks", {
+      acmsDatabase: acmsSharedStack.acmsDatabase,
+      acmsGraphqlApi: acmsSharedStack.acmsGraphqlApi,
+    });
 
     // new BuildingLamdaStacks(this, "BuildingLambdaStacks", {
     //   acmsDatabase: acmsStack.acmsDatabase,
