@@ -30,11 +30,11 @@ export class AcmsStack extends Stack {
     /*********************************
      *    Add test stage
      *********************************/
-    // const devStage = pipeline.addStage(
-    //   new PipelineStage(this, "PipelineDevStage", {
-    //     stageName: "dev",
-    //   })
-    // );
+    const devStage = pipeline.addStage(
+      new PipelineStage(this, "PipelineDevStage", {
+        stageName: "dev",
+      })
+    );
 
     // const prodStage = pipeline.addStage(
     //   new PipelineStage(this, "PipelineProdStage", {
