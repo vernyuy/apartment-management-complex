@@ -36,11 +36,15 @@ export class AcmsStack extends Stack {
       })
     );
 
-    // const prodStage = pipeline.addStage(
-    //   new PipelineStage(this, "PipelineProdStage", {
-    //     stageName: "prod",
-    //   })
-    // );
+    devStage.addPost(
+      new ManualApprovalStep("Manual aproval before production")
+    );
+
+    const prodStage = pipeline.addStage(
+      new PipelineStage(this, "PipelineProdStage", {
+        stageName: "prod",
+      })
+    );
 
     /*****************************************************
      *    Authomate unit test within the stage
@@ -49,10 +53,6 @@ export class AcmsStack extends Stack {
     //   new CodeBuildStep("unit test", {
     //     commands: ["npm ci", "npm run test"],
     //   })
-    // );
-
-    // devStage.addPost(
-    //   new ManualApprovalStep("Manual aproval before production")
     // );
   }
 }

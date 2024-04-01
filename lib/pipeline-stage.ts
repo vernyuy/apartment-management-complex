@@ -29,14 +29,14 @@ export class PipelineStage extends Stage {
     });
 
     // new BookingLamdaStacks(this, "BookingLambdaStacks", {
-    //   acmsDatabase: acmsStack.acmsDatabase,
-    //   acmsGraphqlApi: acmsStack.acmsGraphqlApi,
-    //   acmsTableDatasource: acmsStack.acmsTableDatasource,
+    //   acmsDatabase: acmsSharedStack.acmsDatabase,
+    //   acmsGraphqlApi: acmsSharedStack.acmsGraphqlApi,
+    //   acmsTableDatasource: acmsSharedStack.acmsTableDatasource,
     // });
 
     // new DdbStreamLamdaStacks(this, "DdbStreamLambdaStacks", {
-    //   acmsDatabase: acmsStack.acmsDatabase,
-    //   acmsGraphqlApi: acmsStack.acmsGraphqlApi,
+    //   acmsDatabase: acmsSharedStack.acmsDatabase,
+    //   acmsGraphqlApi: acmsSharedStack.acmsGraphqlApi,
     // });
   }
 }
