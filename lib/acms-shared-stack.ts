@@ -110,7 +110,7 @@ export class AcmsSharedStack extends Stack {
      */
 
     this.acmsDatabase = new Table(this, "ACMSDynamoDbTable", {
-      tableName: "AcmsDynamoDBTable",
+      tableName: "AcmsDynamoDBDatabaseTable",
 
       partitionKey: {
         name: "PK",
