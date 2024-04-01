@@ -18,15 +18,15 @@ export class PipelineStage extends Stage {
       acmsGraphqlApi: acmsSharedStack.acmsGraphqlApi,
     });
 
-    // new BuildingLamdaStacks(this, "BuildingLambdaStacks", {
-    //   acmsDatabase: acmsStack.acmsDatabase,
-    //   acmsGraphqlApi: acmsStack.acmsGraphqlApi,
-    // });
+    new BuildingLamdaStacks(this, "BuildingLambdaStacks", {
+      acmsDatabase: acmsSharedStack.acmsDatabase,
+      acmsGraphqlApi: acmsSharedStack.acmsGraphqlApi,
+    });
 
-    // new ApartmentLamdaStacks(this, "ApartmentLambdaStacks", {
-    //   acmsDatabase: acmsStack.acmsDatabase,
-    //   acmsGraphqlApi: acmsStack.acmsGraphqlApi,
-    // });
+    new ApartmentLamdaStacks(this, "ApartmentLambdaStacks", {
+      acmsDatabase: acmsSharedStack.acmsDatabase,
+      acmsGraphqlApi: acmsSharedStack.acmsGraphqlApi,
+    });
 
     // new BookingLamdaStacks(this, "BookingLambdaStacks", {
     //   acmsDatabase: acmsStack.acmsDatabase,
