@@ -15,6 +15,7 @@ export function request(
     },
     attributeValues: util.dynamodb.toMapValues({
       publishDate: util.time.nowISO8601(),
+      ENTITY: "USER",
       ...item,
     }),
   };

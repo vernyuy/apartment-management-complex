@@ -27,6 +27,7 @@ export type Address = {
   __typename?: 'Address';
   city: Scalars['String']['output'];
   country: Scalars['String']['output'];
+  geoLocation: GeoLocation;
   postalCode: Scalars['String']['output'];
   streetAddress: Scalars['String']['output'];
 };
@@ -34,6 +35,7 @@ export type Address = {
 export type AddressInput = {
   city: Scalars['String']['input'];
   country: Scalars['String']['input'];
+  geoLocation: GeoLocationInput;
   postalCode: Scalars['String']['input'];
   streetAddress: Scalars['String']['input'];
 };
@@ -47,18 +49,27 @@ export type Apartment = {
   caretaker: User;
   createdOn: Scalars['AWSDateTime']['output'];
   id: Scalars['ID']['output'];
+  imageUrls: Array<Scalars['String']['output']>;
   kitchen: Scalars['Boolean']['output'];
+  numberOfBathrooms: Scalars['Int']['output'];
+  numberOfBedrooms: Scalars['Int']['output'];
+  numberOfKitchens: Scalars['Int']['output'];
+  numberOfLivingRooms: Scalars['Int']['output'];
   numberOfRooms: Scalars['Int']['output'];
   tenant: User;
 };
 
 export type ApartmentInput = {
+  apartmentDetails: Scalars['AWSJSON']['input'];
   apartmentNumber: Scalars['String']['input'];
   apartmentStatus: ApartmentStatus;
   apartmentType: ApartmentType;
   buildingId: Scalars['String']['input'];
-  kitchen: Scalars['Boolean']['input'];
-  numberOfRooms: Scalars['Int']['input'];
+  imageUrls: Array<Scalars['String']['input']>;
+  numberOfBathrooms: Scalars['Int']['input'];
+  numberOfBedrooms: Scalars['Int']['input'];
+  numberOfKitchens: Scalars['Int']['input'];
+  numberOfLivingRooms: Scalars['Int']['input'];
 };
 
 export enum ApartmentStatus {
@@ -67,10 +78,19 @@ export enum ApartmentStatus {
 }
 
 export enum ApartmentType {
-  DoubleRoom = 'DOUBLE_ROOM',
+  Duplex = 'DUPLEX',
+  OneBedroom = 'ONE_BEDROOM',
+  Penthouse = 'PENTHOUSE',
   SingleRoom = 'SINGLE_ROOM',
+  Studio = 'STUDIO',
   Villa = 'VILLA'
 }
+
+export type ApartmentsResult = {
+  __typename?: 'ApartmentsResult';
+  items: Array<Apartment>;
+  nextToken?: Maybe<Scalars['String']['output']>;
+};
 
 export type Booking = {
   __typename?: 'Booking';
@@ -97,6 +117,7 @@ export type Building = {
   apartments?: Maybe<Array<Apartment>>;
   createdOn: Scalars['AWSDateTime']['output'];
   id: Scalars['ID']['output'];
+  imageUrls: Array<Scalars['String']['output']>;
   name: Scalars['String']['output'];
   numberOfApartments: Scalars['Int']['output'];
   updateOn: Scalars['AWSDateTime']['output'];
@@ -105,6 +126,7 @@ export type Building = {
 
 export type BuildingInput = {
   address: AddressInput;
+  imageUrls: Array<Scalars['String']['input']>;
   name: Scalars['String']['input'];
   numberOfApartments: Scalars['Int']['input'];
   userId: Scalars['String']['input'];
@@ -118,6 +140,17 @@ export type CreateBookingInput = {
   userId: Scalars['String']['input'];
 };
 
+export type GeoLocation = {
+  __typename?: 'GeoLocation';
+  latitude: Scalars['Float']['output'];
+  longitude: Scalars['Float']['output'];
+};
+
+export type GeoLocationInput = {
+  latitude: Scalars['Float']['input'];
+  longitude: Scalars['Float']['input'];
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
   createApartment: Apartment;
@@ -125,6 +158,7 @@ export type Mutation = {
   createBuilding: Building;
   createUserAccount: User;
   deleteUserAccount: Scalars['Boolean']['output'];
+  leaveFeedback: RatingsAndFeedback;
   updateUserAccount: User;
 };
 
@@ -154,6 +188,11 @@ export type MutationDeleteUserAccountArgs = {
 };
 
 
+export type MutationLeaveFeedbackArgs = {
+  input: RatingsAndFeedbackInput;
+};
+
+
 export type MutationUpdateUserAccountArgs = {
   input: UpdateUserInput;
 };
@@ -165,9 +204,17 @@ export type Pagination = {
 
 export type Query = {
   __typename?: 'Query';
+  getAllApartmentsPerBuilding: ApartmentsResult;
   getAllBookingsPerApartment: Array<Booking>;
   getAllUserAccounts: UsersResult;
+  getApartmentFeedback: Array<RatingsAndFeedback>;
+  getSingleApartment: Array<Apartment>;
   getUserAccount: User;
+};
+
+
+export type QueryGetAllApartmentsPerBuildingArgs = {
+  buildingId: Scalars['String']['input'];
 };
 
 
@@ -181,8 +228,38 @@ export type QueryGetAllUserAccountsArgs = {
 };
 
 
+export type QueryGetApartmentFeedbackArgs = {
+  apartmentId: Scalars['String']['input'];
+};
+
+
+export type QueryGetSingleApartmentArgs = {
+  apartmentId: Scalars['String']['input'];
+};
+
+
 export type QueryGetUserAccountArgs = {
   id: Scalars['ID']['input'];
+};
+
+export type RatingsAndFeedback = {
+  __typename?: 'RatingsAndFeedback';
+  apartment: Apartment;
+  apartmentId: Scalars['String']['output'];
+  createdOn: Scalars['AWSTimestamp']['output'];
+  feedback: Scalars['String']['output'];
+  id: Scalars['String']['output'];
+  ratings: Scalars['Int']['output'];
+  user: User;
+  userId: Scalars['String']['output'];
+};
+
+export type RatingsAndFeedbackInput = {
+  apartmentId: Scalars['String']['input'];
+  createdOn: Scalars['AWSTimestamp']['input'];
+  feedback: Scalars['String']['input'];
+  ratings: Scalars['Int']['input'];
+  userId: Scalars['String']['input'];
 };
 
 export type UpdateUserInput = {
