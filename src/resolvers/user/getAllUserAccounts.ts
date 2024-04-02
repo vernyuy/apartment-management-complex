@@ -6,12 +6,12 @@ export function request(
 ): DynamoDBBatchGetItemRequest {
   // add timestamps
   const id = ctx.args.id;
-
+  const keys = [{ id: id }];
   return {
     operation: 'BatchGetItem',
     tables: {
         AcmsDynamoDBTable: {
-        //   keys: ,
+          keys: keys,
           consistentRead: true,
         },
       },
