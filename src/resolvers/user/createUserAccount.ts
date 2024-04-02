@@ -7,6 +7,7 @@ export function request(
 ): DynamoDBPutItemRequest {
   // add timestamps
   const item = createItem(ctx.args.input!);
+  console.log("ITEM:", item);
 
   return {
     operation: 'PutItem',
@@ -24,5 +25,6 @@ export function request(
 export function response(
   ctx: Context<MutationCreateUserAccountArgs, object, object, object, User>,
 ) {
+  console.log("Result: ", ctx,"RESULTS2: ", ctx.result)
   return ctx.result;
 }
