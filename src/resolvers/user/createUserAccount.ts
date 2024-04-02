@@ -14,7 +14,7 @@ export function request(
       id: util.dynamodb.toDynamoDB(util.autoId()),
     },
     attributeValues: util.dynamodb.toMapValues({
-      publishDate: util.time.nowISO8601(),
+      createdOn: util.time.nowISO8601(),
       ENTITY: "USER",
       ...item,
     }),
