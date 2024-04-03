@@ -34,7 +34,7 @@ export class UserLamdaStacks extends Stack {
         "createUserAccount",
         acmsDatabase
       ),
-      code: bundleAppSyncResolver("src/resolvers/user/createUserAccount.ts"),
+      code: appsync.Code.fromAsset(join(__dirname, "src/resolvers/user/createUserAccount.ts")),
       runtime: appsync.FunctionRuntime.JS_1_0_0,
     });
 
