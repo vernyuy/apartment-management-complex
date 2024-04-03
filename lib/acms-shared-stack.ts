@@ -17,7 +17,6 @@ import { ManagedPolicy, Role, ServicePrincipal } from "aws-cdk-lib/aws-iam";
 export class AcmsSharedStack extends Stack {
   public readonly acmsDatabase: Table;
   public readonly acmsGraphqlApi: appsync.GraphqlApi;
-  public readonly acmsTableDatasource: appsync.DataSourceOptions;
 
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);

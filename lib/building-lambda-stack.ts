@@ -1,18 +1,6 @@
 import { Stack, StackProps } from "aws-cdk-lib";
-import {
-  CfnDataSource,
-  CfnGraphQLApi,
-  CfnGraphQLSchema,
-  CfnResolver,
-} from "aws-cdk-lib/aws-appsync";
-import * as signer from "aws-cdk-lib/aws-signer";
 import { Table } from "aws-cdk-lib/aws-dynamodb";
-import { ManagedPolicy, Role, ServicePrincipal } from "aws-cdk-lib/aws-iam";
-import * as lambda from "aws-cdk-lib/aws-lambda";
 import { Construct } from "constructs";
-import * as path from "path";
-import { NodejsFunction } from "aws-cdk-lib/aws-lambda-nodejs";
-import { Tracing } from "aws-cdk-lib/aws-lambda";
 import * as appsync from "aws-cdk-lib/aws-appsync";
 import { bundleAppSyncResolver } from "./helpers";
 import { join } from "path";
@@ -35,7 +23,7 @@ export class BuildingLamdaStacks extends Stack {
         name: "createBuilding",
         api: acmsGraphqlApi,
         dataSource: acmsGraphqlApi.addDynamoDbDataSource(
-          "acmsDatabase",
+          "acmsBuildingDataSource",
           acmsDatabase
         ),
         code: bundleAppSyncResolver("src/resolvers/building/createBuilding.ts"),
