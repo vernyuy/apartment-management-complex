@@ -15,6 +15,8 @@ export class UserLamdaStacks extends Stack {
 
     const { acmsDatabase, acmsGraphqlApi } = props;
 
+    const acmsDataSource = acmsGraphqlApi.addDynamoDbDataSource('postDataSource', acmsDatabase);
+
     const defaultPipelineCode = appsync.Code.fromInline(`
     // The before step
     export function request(...args) {
@@ -30,10 +32,7 @@ export class UserLamdaStacks extends Stack {
     const createUserAccountFunction = new appsync.AppsyncFunction(this, "createUserAccount", {
       name: "createUserAccount",
       api: acmsGraphqlApi,
-      dataSource: acmsGraphqlApi.addDynamoDbDataSource(
-        "createUserAccount",
-        acmsDatabase
-      ),
+      dataSource: acmsDataSource,
       code: appsync.Code.fromAsset( "src/resolvers/user/createUserAccount.ts"),
       runtime: appsync.FunctionRuntime.JS_1_0_0,
     });
