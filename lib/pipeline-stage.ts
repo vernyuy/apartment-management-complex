@@ -13,20 +13,20 @@ export class PipelineStage extends Stage {
 
     const acmsSharedStack = new AcmsSharedStack(this, "AcmsSharedStack");
 
-    // new UserLamdaStacks(this, "UserLambdaStacks", {
-    //   acmsDatabase: acmsSharedStack.acmsDatabase,
-    //   acmsGraphqlApi: acmsSharedStack.acmsGraphqlApi,
-    // });
+    new UserLamdaStacks(this, "UserLambdaStacks", {
+      acmsDatabase: acmsSharedStack.acmsDatabase,
+      acmsGraphqlApi: acmsSharedStack.acmsGraphqlApi,
+    });
 
-    // new BuildingLamdaStacks(this, "BuildingLambdaStacks", {
-    //   acmsDatabase: acmsSharedStack.acmsDatabase,
-    //   acmsGraphqlApi: acmsSharedStack.acmsGraphqlApi,
-    // });
+    new BuildingLamdaStacks(this, "BuildingLambdaStacks", {
+      acmsDatabase: acmsSharedStack.acmsDatabase,
+      acmsGraphqlApi: acmsSharedStack.acmsGraphqlApi,
+    });
 
-    // new ApartmentLamdaStacks(this, "ApartmentLambdaStacks", {
-    //   acmsDatabase: acmsSharedStack.acmsDatabase,
-    //   acmsGraphqlApi: acmsSharedStack.acmsGraphqlApi,
-    // });
+    new ApartmentLamdaStacks(this, "ApartmentLambdaStacks", {
+      acmsDatabase: acmsSharedStack.acmsDatabase,
+      acmsGraphqlApi: acmsSharedStack.acmsGraphqlApi,
+    });
 
     // new BookingLamdaStacks(this, "BookingLambdaStacks", {
     //   acmsDatabase: acmsSharedStack.acmsDatabase,
