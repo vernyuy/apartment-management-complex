@@ -15,7 +15,7 @@ export class UserLamdaStacks extends Stack {
 
     const { acmsDatabase, acmsGraphqlApi } = props;
 
-    const acmsDataSource = acmsGraphqlApi.addDynamoDbDataSource('postDataSource', acmsDatabase);
+    const acmsDataSource = acmsGraphqlApi.addDynamoDbDataSource('acmsDataSource', acmsDatabase);
 
     const defaultPipelineCode = appsync.Code.fromInline(`
     // The before step
