@@ -23,7 +23,7 @@ export function request(
 }
 
 export function response(
-  ctx: Context<MutationCreateUserAccountArgs, object, object, object, User>,
+  ctx: Context<MutationCreateUserAccountArgs, User>,
 ) {
   console.log("Result: ", ctx,"RESULTS2: ", ctx.result)
   return ctx.result;
