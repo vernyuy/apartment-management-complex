@@ -14,14 +14,14 @@ export class UserLamdaStacks extends Stack {
     super(scope, id, props);
 
     const { acmsDatabase, acmsGraphqlApi } = props;
-
+    const acmsDataSource = acmsGraphqlApi.addDynamoDbDataSource(
+      "acmsdbs",
+      acmsDatabase
+    )
     const acmsUserFunction = new appsync.AppsyncFunction(this, "createUserAccount", {
       name: "createUserAccount",
       api: acmsGraphqlApi,
-      dataSource: acmsGraphqlApi.addDynamoDbDataSource(
-        "createUserAccount",
-        acmsDatabase
-      ),
+      dataSource: acmsDataSource,
       code: bundleAppSyncResolver("src/resolvers/user/createUserAccount.ts"),
       runtime: appsync.FunctionRuntime.JS_1_0_0,
     });
