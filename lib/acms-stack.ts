@@ -40,11 +40,11 @@ export class AcmsStack extends Stack {
       new ManualApprovalStep("Manual aproval before production")
     );
 
-    const prodStage = pipeline.addStage(
-      new PipelineStage(this, "PipelineProdStage", {
-        stageName: "prod",
-      })
-    );
+    // const prodStage = pipeline.addStage(
+    //   new PipelineStage(this, "PipelineProdStage", {
+    //     stageName: "prod",
+    //   })
+    // );
 
     /*****************************************************
      *    Authomate unit test within the stage
