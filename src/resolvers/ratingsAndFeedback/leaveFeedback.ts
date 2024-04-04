@@ -10,10 +10,10 @@ export function request(
 
   return {
     operation: "PutItem",
-    key: {
+    key: util.dynamodb.toMapValues({
       PK: `APARTMENT#${item.apartmentId}`,
-      SK: `FEEDBACK#${util.dynamodb.toDynamoDB(util.autoId())}`,
-    },
+      SK: `FEEDBACK#${util.autoId()}`,
+    }),
 
     attributeValues: util.dynamodb.toMapValues({
       publishedOn: util.time.nowISO8601(),

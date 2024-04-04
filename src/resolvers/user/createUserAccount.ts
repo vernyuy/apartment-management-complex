@@ -8,7 +8,7 @@ export function request(
   // add timestamps
   const item = createItem(ctx.args.input!);
   console.log("ITEM:", item);
-  const id = util.dynamodb.toDynamoDB(util.autoId())
+  const id = util.autoId()
 
   console.log("ITEM>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>:", id);
   return {

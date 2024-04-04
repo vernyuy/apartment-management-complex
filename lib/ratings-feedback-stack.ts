@@ -11,25 +11,27 @@ interface RatingsAndFeedbackStackProps extends StackProps {
 }
 
 export class RatingsAndFeedbackStack extends Stack {
-  constructor(scope: Construct, id: string, props: RatingsAndFeedbackStackProps) {
+  constructor(
+    scope: Construct,
+    id: string,
+    props: RatingsAndFeedbackStackProps
+  ) {
     super(scope, id, props);
 
     const { acmsDatabase, acmsGraphqlApi } = props;
 
-    const leaveFeedback = new appsync.AppsyncFunction(
-      this,
-      "leaveFeedback",
-      {
-        name: "leaveFeedback",
-        api: acmsGraphqlApi,
-        dataSource: acmsGraphqlApi.addDynamoDbDataSource(
-          "acmsFeedbackDataSource",
-          acmsDatabase
-        ),
-        code: bundleAppSyncResolver("src/resolvers/ratingsAndFeedback/leaveFeedback.ts"),
-        runtime: appsync.FunctionRuntime.JS_1_0_0,
-      }
-    );
+    const leaveFeedback = new appsync.AppsyncFunction(this, "leaveFeedback", {
+      name: "leaveFeedback",
+      api: acmsGraphqlApi,
+      dataSource: acmsGraphqlApi.addDynamoDbDataSource(
+        "acmsFeedbackDataSource",
+        acmsDatabase
+      ),
+      code: bundleAppSyncResolver(
+        "src/resolvers/ratingsAndFeedback/leaveFeedback.ts"
+      ),
+      runtime: appsync.FunctionRuntime.JS_1_0_0,
+    });
 
     new appsync.Resolver(this, "leaveFeedbackResolver", {
       api: acmsGraphqlApi,
@@ -42,5 +44,32 @@ export class RatingsAndFeedbackStack extends Stack {
       pipelineConfig: [leaveFeedback],
     });
 
+    const getApartmentFeedback = new appsync.AppsyncFunction(
+      this,
+      "getApartmentFeedback",
+      {
+        name: "getApartmentFeedback",
+        api: acmsGraphqlApi,
+        dataSource: acmsGraphqlApi.addDynamoDbDataSource(
+          "acmsFeedbackDataSource",
+          acmsDatabase
+        ),
+        code: bundleAppSyncResolver(
+          "src/resolvers/ratingsAndFeedback/getApartmentFeedback.ts"
+        ),
+        runtime: appsync.FunctionRuntime.JS_1_0_0,
+      }
+    );
+
+    new appsync.Resolver(this, "getApartmentFeedback", {
+      api: acmsGraphqlApi,
+      typeName: "Query",
+      fieldName: "getApartmentFeedback",
+      code: appsync.Code.fromAsset(
+        join(__dirname, "./js_resolvers/_before_and_after_mapping_template.js")
+      ),
+      runtime: appsync.FunctionRuntime.JS_1_0_0,
+      pipelineConfig: [getApartmentFeedback],
+    });
   }
 }

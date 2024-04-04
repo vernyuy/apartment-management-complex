@@ -13,10 +13,10 @@ export function request(
 
   return {
     operation: "PutItem",
-    key: {
+    key: util.dynamodb.toMapValues({
       PK: `APARTMENT#${item.apartmentId}`,
-      SK: `BOOKING#${util.dynamodb.toDynamoDB(util.autoId())}`,
-    },
+      SK: `BOOKING#${util.autoId()}`,
+    }),
     attributeValues: util.dynamodb.toMapValues({
       GSI1PK: `USER#${item.userId}`,
       GSI1SK: `APARTMENT#${item.apartmentId}`,

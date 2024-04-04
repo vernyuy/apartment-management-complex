@@ -7,14 +7,14 @@ export function request(
 ): DynamoDBPutItemRequest {
   // add timestamps
   const item = createItem(ctx.args.input!);
-  const id = util.dynamodb.toDynamoDB(util.autoId())
+  const id = util.autoId()
 
   return {
     operation: 'PutItem',
-    key: {
+    key: util.dynamodb.toMapValues({
       PK: "BUILDING",
       SK: `BUILDING#${id}`
-    },
+    }),
     attributeValues: util.dynamodb.toMapValues({
       GSI2PK: `USER#${item.userId}`,
       GSI2SK: `BUILDING#${id}`,
