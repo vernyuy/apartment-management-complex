@@ -4,6 +4,7 @@ import { BuildingLamdaStacks } from "./building-lambda-stack";
 import { ApartmentLamdaStacks } from "./apartment-lambda-stack";
 import { BookingLamdaStacks } from "./booking-lambda-stack";
 import { DdbStreamLamdaStacks } from "./ddb-stream-lambda-stack";
+import { RatingsAndFeedbackStack } from "./ratings-feedback-stack";
 import { Stage, StageProps } from "aws-cdk-lib";
 import { Construct } from "constructs";
 
@@ -24,6 +25,11 @@ export class PipelineStage extends Stage {
     });
 
     new ApartmentLamdaStacks(this, "ApartmentLambdaStacks", {
+      acmsDatabase: acmsSharedStack.acmsDatabase,
+      acmsGraphqlApi: acmsSharedStack.acmsGraphqlApi,
+    });
+
+    new RatingsAndFeedbackStack(this, "RatingsAndFeedbackStack", {
       acmsDatabase: acmsSharedStack.acmsDatabase,
       acmsGraphqlApi: acmsSharedStack.acmsGraphqlApi,
     });
