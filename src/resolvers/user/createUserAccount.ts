@@ -13,10 +13,10 @@ export function request(
   console.log("ITEM>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>:", id);
   return {
     operation: 'PutItem',
-    key: {
-      PK: util.dynamodb.toDynamoDB("USER"),
+    key: util.dynamodb.toMapValues({
+      PK: "USER",
       SK: `USER#${id}`
-    },
+    }),
     attributeValues: util.dynamodb.toMapValues({
       createdOn: util.time.nowISO8601(),
       ENTITY: "USER",
