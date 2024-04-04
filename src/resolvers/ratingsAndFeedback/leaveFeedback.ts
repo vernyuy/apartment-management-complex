@@ -16,7 +16,7 @@ export function request(
     },
 
     attributeValues: util.dynamodb.toMapValues({
-      createdOn: util.time.nowISO8601(),
+      publishedOn: util.time.nowISO8601(),
       ENTITY: "FEEDBACK",
       ...item,
     }),
