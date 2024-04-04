@@ -45,54 +45,54 @@ export class BookingLamdaStacks extends Stack {
       },
     });
 
-    const policyStatement = new aws_iam.PolicyStatement({
-      effect: aws_iam.Effect.ALLOW,
-      actions: ["cloudwatch:PutMetricData"],
-      resources: ["*"],
-    });
+    // const policyStatement = new aws_iam.PolicyStatement({
+    //   effect: aws_iam.Effect.ALLOW,
+    //   actions: ["cloudwatch:PutMetricData"],
+    //   resources: ["*"],
+    // });
 
-    const signingProfile = new signer.SigningProfile(this, "SigningProfile", {
-      platform: signer.Platform.AWS_LAMBDA_SHA384_ECDSA,
-    });
+    // const signingProfile = new signer.SigningProfile(this, "SigningProfile", {
+    //   platform: signer.Platform.AWS_LAMBDA_SHA384_ECDSA,
+    // });
 
-    const codeSigningConfig = new lambda.CodeSigningConfig(
-      this,
-      "CodeSigningConfig",
-      {
-        signingProfiles: [signingProfile],
-      }
-    );
-
-    /**
-     *
-     * IAM role for Queue Lambda function
-     */
-    const lambdaQueueRole = new Role(this, "QueueConsumerFunctionRole", {
-      assumedBy: new ServicePrincipal("lambda.amazonaws.com"),
-      managedPolicies: [
-        ManagedPolicy.fromAwsManagedPolicyName(
-          "service-role/AWSLambdaSQSQueueExecutionRole"
-        ),
-        ManagedPolicy.fromAwsManagedPolicyName("AWSLambda_FullAccess"),
-        ManagedPolicy.fromAwsManagedPolicyName(
-          "service-role/AWSAppSyncPushToCloudWatchLogs"
-        ),
-      ],
-    });
+    // const codeSigningConfig = new lambda.CodeSigningConfig(
+    //   this,
+    //   "CodeSigningConfig",
+    //   {
+    //     signingProfiles: [signingProfile],
+    //   }
+    // );
 
     /**
      *
      * IAM role for Queue Lambda function
      */
-    const lambdaRole = new Role(this, "LmbdaFunctionRole", {
-      assumedBy: new ServicePrincipal("lambda.amazonaws.com"),
-      managedPolicies: [
-        ManagedPolicy.fromAwsManagedPolicyName("AWSLambda_FullAccess"),
-        ManagedPolicy.fromAwsManagedPolicyName(
-          "service-role/AWSAppSyncPushToCloudWatchLogs"
-        ),
-      ],
-    });
+    // const lambdaQueueRole = new Role(this, "QueueConsumerFunctionRole", {
+    //   assumedBy: new ServicePrincipal("lambda.amazonaws.com"),
+    //   managedPolicies: [
+    //     ManagedPolicy.fromAwsManagedPolicyName(
+    //       "service-role/AWSLambdaSQSQueueExecutionRole"
+    //     ),
+    //     ManagedPolicy.fromAwsManagedPolicyName("AWSLambda_FullAccess"),
+    //     ManagedPolicy.fromAwsManagedPolicyName(
+    //       "service-role/AWSAppSyncPushToCloudWatchLogs"
+    //     ),
+    //   ],
+    // });
+
+    /**
+     *
+     * IAM role for Queue Lambda function
+     */
+    // const lambdaRole = new Role(this, "LmbdaFunctionRole", {
+    //   assumedBy: new ServicePrincipal("lambda.amazonaws.com"),
+    //   managedPolicies: [
+    //     ManagedPolicy.fromAwsManagedPolicyName("AWSLambda_FullAccess"),
+    //     ManagedPolicy.fromAwsManagedPolicyName(
+    //       "service-role/AWSAppSyncPushToCloudWatchLogs"
+    //     ),
+    //   ],
+    // });
 
     /**
      * booking function
@@ -102,13 +102,9 @@ export class BookingLamdaStacks extends Stack {
       "AcmsBookingHandler",
       {
         tracing: Tracing.ACTIVE,
-        codeSigningConfig,
         runtime: lambda.Runtime.NODEJS_16_X,
         handler: "handler",
         entry: path.join(__dirname, "lambda-fns/booking", "app.ts"),
-        initialPolicy: [policyStatement],
-        role: lambdaRole,
-
         memorySize: 1024,
       }
     );
@@ -121,7 +117,6 @@ export class BookingLamdaStacks extends Stack {
       "ProcessSqSBookingHandler",
       {
         tracing: Tracing.ACTIVE,
-        codeSigningConfig,
         runtime: lambda.Runtime.NODEJS_16_X,
         handler: "handler",
         entry: path.join(
@@ -129,9 +124,6 @@ export class BookingLamdaStacks extends Stack {
           "lambda-fns/booking",
           "processSqsBooking.ts"
         ),
-        initialPolicy: [policyStatement],
-        role: lambdaQueueRole,
-
         memorySize: 1024,
       }
     );
@@ -140,25 +132,25 @@ export class BookingLamdaStacks extends Stack {
      * lambda to sqs
      */
 
-    const eventSourceMapping = new lambda.EventSourceMapping(
-      this,
-      "QueueConsumerFunctionBookingEvent",
-      {
-        target: processSQSLambda,
-        batchSize: 10,
-        eventSourceArn: queue.queueArn,
-        reportBatchItemFailures: true,
-      }
-    );
-    const appsyncLambdaRole = new Role(this, "LambdaRole", {
-      assumedBy: new ServicePrincipal("appsync.amazonaws.com"),
-      managedPolicies: [
-        ManagedPolicy.fromAwsManagedPolicyName(
-          "service-role/AWSLambdaSQSQueueExecutionRole"
-        ),
-        ManagedPolicy.fromAwsManagedPolicyName("AWSLambda_FullAccess"),
-      ],
-    });
+    // const eventSourceMapping = new lambda.EventSourceMapping(
+    //   this,
+    //   "QueueConsumerFunctionBookingEvent",
+    //   {
+    //     target: processSQSLambda,
+    //     batchSize: 10,
+    //     eventSourceArn: queue.queueArn,
+    //     reportBatchItemFailures: true,
+    //   }
+    // );
+    // const appsyncLambdaRole = new Role(this, "LambdaRole", {
+    //   assumedBy: new ServicePrincipal("appsync.amazonaws.com"),
+    //   managedPolicies: [
+    //     ManagedPolicy.fromAwsManagedPolicyName(
+    //       "service-role/AWSLambdaSQSQueueExecutionRole"
+    //     ),
+    //     ManagedPolicy.fromAwsManagedPolicyName("AWSLambda_FullAccess"),
+    //   ],
+    // });
 
     const lambdaDataSources = acmsGraphqlApi.addLambdaDataSource(
       "bookingLambdaDatasource",
@@ -180,60 +172,33 @@ export class BookingLamdaStacks extends Stack {
       }
     );
 
-    // const getAllBookingsByApartmentFunction =
-    //   new CfnFunctionConfiguration(this, "getAllBookingsFunction", {
-    //     apiId: acmsGraphqlApi.attrApiId,
+    const getAllBookingsPerApartmentFunction = new appsync.AppsyncFunction(
+      this,
+      "getAllBookingsPerApartmentFunction",
+      {
+        name: "getAllBookingsPerApartment",
+        api: acmsGraphqlApi,
+        dataSource: acmsGraphqlApi.addDynamoDbDataSource(
+          "getAllBookingsPerApartment",
+          acmsDatabase,
+        ),
+        code: bundleAppSyncResolver(
+          "src/resolvers/booking/getAllBookingPerApartment.ts",
+        ),
+        runtime: appsync.FunctionRuntime.JS_1_0_0,
+      },
+    );
 
-    //     dataSourceName: acmsTableDatasource.name,
-    //     requestMappingTemplate: readFileSync(
-    //       "./lib/vtl_templates/get_all_bookings_per_apartment_request.vtl"
-    //     ).toString(),
-    //     responseMappingTemplate: readFileSync(
-    //       "./lib/vtl_templates/get_all_bookings_per_apartment_response.vtl"
-    //     ).toString(),
-    //     functionVersion: "2018-05-29",
-    //     name: "getAllBookingsFunction",
-    //   });
-
-    // const getUserPerBookingsFunction: CfnFunctionConfiguration =
-    //   new CfnFunctionConfiguration(this, "getUserPerBookingFunction", {
-    //     apiId: acmsGraphqlApi.attrApiId,
-
-    //     dataSourceName: acmsTableDatasource.name,
-    //     requestMappingTemplate: readFileSync(
-    //       "./lib/vtl_templates/get_user_per_booking_request.vtl"
-    //     ).toString(),
-    //     responseMappingTemplate: readFileSync(
-    //       "./lib/vtl_templates/get_user_per_booking_response.vtl"
-    //     ).toString(),
-    //     functionVersion: "2018-05-29",
-    //     name: "getUserPerBookingFunction",
-    //   });
-
-    // const getResultBookingPerApartmentResolver: CfnResolver = new CfnResolver(
-    //   this,
-    //   "getResultBookingPerApartmentResolver",
-    //   {
-    //     apiId: acmsGraphqlApi.attrApiId,
-    //     typeName: "Query",
-    //     fieldName: "getAllBookingsPerApartment",
-    //     kind: "PIPELINE",
-    //     pipelineConfig: {
-    //       functions: [
-    //         getAllBookingsByApartmentFunction.attrFunctionId,
-    //         getUserPerBookingsFunction.attrFunctionId,
-    //       ],
-    //     },
-
-    //     requestMappingTemplate: readFileSync(
-    //       "./lib/vtl_templates/before_mapping_template.vtl"
-    //     ).toString(),
-
-    //     responseMappingTemplate: readFileSync(
-    //       "./lib/vtl_templates/after_mapping_template.vtl"
-    //     ).toString(),
-    //   }
-    // );
+    new appsync.Resolver(this, "getAllBookingsPerApartmentResolver", {
+      api: acmsGraphqlApi,
+      typeName: "Query",
+      fieldName: "getAllBookingsPerApartment",
+      code: appsync.Code.fromAsset(
+        join(__dirname, "./js_resolvers/_before_and_after_mapping_template.js"),
+      ),
+      runtime: appsync.FunctionRuntime.JS_1_0_0,
+      pipelineConfig: [getAllBookingsPerApartmentFunction],
+    });
 
     acmsDatabase.grantWriteData(processSQSLambda);
     acmsDatabase.grantReadData(bookingLambda);

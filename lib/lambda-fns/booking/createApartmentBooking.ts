@@ -3,6 +3,7 @@ import {  DynamoDB, SQS } from "aws-sdk";
 import { uuid } from "../../utils";
 import CreateBookingInput from "./CreateBookingInput";
 import { BookingEntity } from "./entities/bookingEntity";
+import { MutationCreateApartmentBookingArgs, Booking } from '../../../src/types/appsync'
 
 async function createApartmentBooking(
   appsyncInput: CreateBookingInput,
