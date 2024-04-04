@@ -10,7 +10,7 @@ export function request(
   return {
     operation: 'GetItem',
     key: {
-      id: id,
+      PK: `USER#${id}`,
     }
   };
 }

@@ -29,5 +29,10 @@ export function response(
   ctx: Context<MutationCreateUserAccountArgs, object, object, object, User>,
 ) {
   console.log("Result: ", ctx,"RESULTS2: ", ctx.result)
-  return ctx.result;
+  return {
+    firstName: ctx.result.firstName,
+    lastName: ctx.result.lastName,
+    email: ctx.result.email,
+    createdAt: ctx.result.createdOn,
+  };
 }

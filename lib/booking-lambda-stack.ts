@@ -7,30 +7,31 @@ import {
   CfnResolver,
 } from "aws-cdk-lib/aws-appsync";
 import * as signer from "aws-cdk-lib/aws-signer";
-import { Table } from "aws-cdk-lib/aws-dynamodb";
 import { ManagedPolicy, Role, ServicePrincipal } from "aws-cdk-lib/aws-iam";
 import * as lambda from "aws-cdk-lib/aws-lambda";
-import { Construct } from "constructs";
 import * as path from "path";
 import { NodejsFunction } from "aws-cdk-lib/aws-lambda-nodejs";
-import * as sqs from "aws-cdk-lib/aws-sqs";
 import { Tracing } from "aws-cdk-lib/aws-lambda";
 import { aws_iam } from "aws-cdk-lib";
-import { readFileSync } from "fs";
-import { SqsDestination } from "aws-cdk-lib/aws-lambda-destinations";
+import { Table } from "aws-cdk-lib/aws-dynamodb";
+import { Construct } from "constructs";
+import * as appsync from "aws-cdk-lib/aws-appsync";
+import { bundleAppSyncResolver } from "./helpers";
+import { join } from "path";
+import * as sqs from  "aws-cdk-lib/aws-sqs";
 
 interface BookingLambdaStackProps extends StackProps {
-  acmsGraphqlApi: CfnGraphQLApi;
-  apiSchema: CfnGraphQLSchema;
+  acmsGraphqlApi: appsync.GraphqlApi;
+  // apiSchema: CfnGraphQLSchema;
   acmsDatabase: Table;
-  acmsTableDatasource: CfnDataSource;
+  // acmsTableDatasource: CfnDataSource;
 }
 
 export class BookingLamdaStacks extends Stack {
   constructor(scope: Construct, id: string, props: BookingLambdaStackProps) {
     super(scope, id, props);
 
-    const { acmsDatabase, acmsGraphqlApi, apiSchema, acmsTableDatasource } =
+    const { acmsDatabase, acmsGraphqlApi } =
       props;
     /**
      * Create SQS Queue and Dead letter Queue
@@ -159,89 +160,81 @@ export class BookingLamdaStacks extends Stack {
       ],
     });
 
-    const lambdaDataSources: CfnDataSource = new CfnDataSource(
-      this,
-      "ACMSBookingLambdaDatasource",
-      {
-        apiId: acmsGraphqlApi.attrApiId,
-        name: "ACMSBookingLambdaDatasource",
-        type: "AWS_LAMBDA",
+    const lambdaDataSources = acmsGraphqlApi.addLambdaDataSource(
+      "bookingLambdaDatasource",
+      bookingLambda
+    )
 
-        lambdaConfig: {
-          lambdaFunctionArn: bookingLambda.functionArn,
-        },
-        serviceRoleArn: appsyncLambdaRole.roleArn,
-      }
-    );
-
-    const createApartmentBookingResolver: CfnResolver = new CfnResolver(
+    const createApartmentBookingResolver: appsync.Resolver = new appsync.Resolver(
       this,
       "createApartmentBookingResolver",
       {
-        apiId: acmsGraphqlApi.attrApiId,
+        api: acmsGraphqlApi,
         typeName: "Mutation",
         fieldName: "createApartmentBooking",
-        dataSourceName: lambdaDataSources.attrName,
+
+        code: appsync.Code.fromAsset(
+          join(__dirname, "./js_resolvers/_before_and_after_mapping_template.js")
+        ),
+        dataSource: lambdaDataSources,
       }
     );
 
-    const getAllBookingsByApartmentFunction: CfnFunctionConfiguration =
-      new CfnFunctionConfiguration(this, "getAllBookingsFunction", {
-        apiId: acmsGraphqlApi.attrApiId,
+    // const getAllBookingsByApartmentFunction =
+    //   new CfnFunctionConfiguration(this, "getAllBookingsFunction", {
+    //     apiId: acmsGraphqlApi.attrApiId,
 
-        dataSourceName: acmsTableDatasource.name,
-        requestMappingTemplate: readFileSync(
-          "./lib/vtl_templates/get_all_bookings_per_apartment_request.vtl"
-        ).toString(),
-        responseMappingTemplate: readFileSync(
-          "./lib/vtl_templates/get_all_bookings_per_apartment_response.vtl"
-        ).toString(),
-        functionVersion: "2018-05-29",
-        name: "getAllBookingsFunction",
-      });
+    //     dataSourceName: acmsTableDatasource.name,
+    //     requestMappingTemplate: readFileSync(
+    //       "./lib/vtl_templates/get_all_bookings_per_apartment_request.vtl"
+    //     ).toString(),
+    //     responseMappingTemplate: readFileSync(
+    //       "./lib/vtl_templates/get_all_bookings_per_apartment_response.vtl"
+    //     ).toString(),
+    //     functionVersion: "2018-05-29",
+    //     name: "getAllBookingsFunction",
+    //   });
 
-    const getUserPerBookingsFunction: CfnFunctionConfiguration =
-      new CfnFunctionConfiguration(this, "getUserPerBookingFunction", {
-        apiId: acmsGraphqlApi.attrApiId,
+    // const getUserPerBookingsFunction: CfnFunctionConfiguration =
+    //   new CfnFunctionConfiguration(this, "getUserPerBookingFunction", {
+    //     apiId: acmsGraphqlApi.attrApiId,
 
-        dataSourceName: acmsTableDatasource.name,
-        requestMappingTemplate: readFileSync(
-          "./lib/vtl_templates/get_user_per_booking_request.vtl"
-        ).toString(),
-        responseMappingTemplate: readFileSync(
-          "./lib/vtl_templates/get_user_per_booking_response.vtl"
-        ).toString(),
-        functionVersion: "2018-05-29",
-        name: "getUserPerBookingFunction",
-      });
+    //     dataSourceName: acmsTableDatasource.name,
+    //     requestMappingTemplate: readFileSync(
+    //       "./lib/vtl_templates/get_user_per_booking_request.vtl"
+    //     ).toString(),
+    //     responseMappingTemplate: readFileSync(
+    //       "./lib/vtl_templates/get_user_per_booking_response.vtl"
+    //     ).toString(),
+    //     functionVersion: "2018-05-29",
+    //     name: "getUserPerBookingFunction",
+    //   });
 
-    const getResultBookingPerApartmentResolver: CfnResolver = new CfnResolver(
-      this,
-      "getResultBookingPerApartmentResolver",
-      {
-        apiId: acmsGraphqlApi.attrApiId,
-        typeName: "Query",
-        fieldName: "getAllBookingsPerApartment",
-        kind: "PIPELINE",
-        pipelineConfig: {
-          functions: [
-            getAllBookingsByApartmentFunction.attrFunctionId,
-            getUserPerBookingsFunction.attrFunctionId,
-          ],
-        },
+    // const getResultBookingPerApartmentResolver: CfnResolver = new CfnResolver(
+    //   this,
+    //   "getResultBookingPerApartmentResolver",
+    //   {
+    //     apiId: acmsGraphqlApi.attrApiId,
+    //     typeName: "Query",
+    //     fieldName: "getAllBookingsPerApartment",
+    //     kind: "PIPELINE",
+    //     pipelineConfig: {
+    //       functions: [
+    //         getAllBookingsByApartmentFunction.attrFunctionId,
+    //         getUserPerBookingsFunction.attrFunctionId,
+    //       ],
+    //     },
 
-        requestMappingTemplate: readFileSync(
-          "./lib/vtl_templates/before_mapping_template.vtl"
-        ).toString(),
+    //     requestMappingTemplate: readFileSync(
+    //       "./lib/vtl_templates/before_mapping_template.vtl"
+    //     ).toString(),
 
-        responseMappingTemplate: readFileSync(
-          "./lib/vtl_templates/after_mapping_template.vtl"
-        ).toString(),
-      }
-    );
+    //     responseMappingTemplate: readFileSync(
+    //       "./lib/vtl_templates/after_mapping_template.vtl"
+    //     ).toString(),
+    //   }
+    // );
 
-    createApartmentBookingResolver.addDependsOn(apiSchema);
-    getResultBookingPerApartmentResolver.addDependsOn(apiSchema);
     acmsDatabase.grantWriteData(processSQSLambda);
     acmsDatabase.grantReadData(bookingLambda);
     queue.grantSendMessages(bookingLambda);
