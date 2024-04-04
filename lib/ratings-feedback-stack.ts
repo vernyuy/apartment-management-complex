@@ -46,12 +46,12 @@ export class RatingsAndFeedbackStack extends Stack {
 
     const getApartmentFeedback = new appsync.AppsyncFunction(
       this,
-      "getApartmentFeedback",
+      "ApartmentFeedback",
       {
         name: "getApartmentFeedback",
         api: acmsGraphqlApi,
         dataSource: acmsGraphqlApi.addDynamoDbDataSource(
-          "acmsFeedbackDataSource",
+          "FeedbackDataSource",
           acmsDatabase
         ),
         code: bundleAppSyncResolver(
@@ -61,7 +61,7 @@ export class RatingsAndFeedbackStack extends Stack {
       }
     );
 
-    new appsync.Resolver(this, "getApartmentFeedback", {
+    new appsync.Resolver(this, "getApartmentFeedbackResolver", {
       api: acmsGraphqlApi,
       typeName: "Query",
       fieldName: "getApartmentFeedback",
