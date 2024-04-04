@@ -8,11 +8,14 @@ export function request(
   // add timestamps
   const item = createItem(ctx.args.input!);
   console.log("ITEM:", item);
+  const id = util.dynamodb.toDynamoDB(util.autoId())
 
+  console.log("ITEM>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>:", id);
   return {
     operation: 'PutItem',
     key: {
-      id: util.dynamodb.toDynamoDB(util.autoId()),
+      PK: "USER",
+      SK: `USER#${id}`
     },
     attributeValues: util.dynamodb.toMapValues({
       createdOn: util.time.nowISO8601(),
