@@ -14,7 +14,7 @@ export function request(
   return {
     operation: 'PutItem',
     key: {
-      PK: "USER",
+      PK: util.dynamodb.toDynamoDB("USER"),
       SK: `USER#${id}`
     },
     attributeValues: util.dynamodb.toMapValues({

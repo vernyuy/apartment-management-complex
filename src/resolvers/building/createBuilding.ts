@@ -19,7 +19,7 @@ export function request(
       GSI2PK: `USER#${item.userId}`,
       GSI2SK: `BUILDING#${id}`,
       ENTITY: "BUILDING",
-      publishDate: util.time.nowISO8601(),
+      createdOn: util.time.nowISO8601(),
       ...item,
     }),
   };
