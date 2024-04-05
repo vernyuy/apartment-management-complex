@@ -18,7 +18,6 @@ export function request(
       SK: `USER#${id}`
     }),
     attributeValues: util.dynamodb.toMapValues({
-      createdOn: util.time.nowISO8601(),
       id: id,
       ENTITY: "USER",
       ...item,
