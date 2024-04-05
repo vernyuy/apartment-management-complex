@@ -19,5 +19,6 @@ export function request(
 export function response(
   ctx: Context<QueryGetUserAccountArgs, object, object, object, User>,
 ) {
+  console.log("Reslutss>>>>", ctx.result)
   return ctx.result;
 }
