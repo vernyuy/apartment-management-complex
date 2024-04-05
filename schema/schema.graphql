@@ -133,7 +133,6 @@ input RatingsAndFeedbackInput @aws_cognito_user_pools {
   userId: String!
   apartmentId: String!
   feedback: String!
-  createdOn: AWSTimestamp!
 }
 
 type Building @aws_cognito_user_pools {

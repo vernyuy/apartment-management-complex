@@ -256,7 +256,6 @@ export type RatingsAndFeedback = {
 
 export type RatingsAndFeedbackInput = {
   apartmentId: Scalars['String']['input'];
-  createdOn: Scalars['AWSTimestamp']['input'];
   feedback: Scalars['String']['input'];
   ratings: Scalars['Int']['input'];
   userId: Scalars['String']['input'];
