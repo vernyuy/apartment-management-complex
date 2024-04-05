@@ -19,6 +19,7 @@ export function request(
     }),
     attributeValues: util.dynamodb.toMapValues({
       createdOn: util.time.nowISO8601(),
+      id: id,
       ENTITY: "USER",
       ...item,
     }),
@@ -29,10 +30,5 @@ export function response(
   ctx: Context<MutationCreateUserAccountArgs, object, object, object, User>,
 ) {
   console.log("Result: ", ctx,"RESULTS2: ", ctx.result)
-  return {
-    firstName: ctx.result.firstName,
-    lastName: ctx.result.lastName,
-    email: ctx.result.email,
-    createdAt: ctx.result.createdOn,
-  };
+  return ctx.result;
 }
