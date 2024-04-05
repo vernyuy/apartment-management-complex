@@ -81,8 +81,8 @@ type User @aws_cognito_user_pools {
   email: String!
   verified: Boolean!
   userType: UserType!
-  updatedOn: AWSDateTime
-  createdOn: AWSDateTime!
+  updatedAt: AWSDateTime
+  createdAt: AWSDateTime!
 }
 type Booking @aws_cognito_user_pools {
   id: ID!
@@ -92,8 +92,8 @@ type Booking @aws_cognito_user_pools {
   endDate: AWSDate!
   apartmentId: String!
   bookingStatus: BookingStatus!
-  updateOn: AWSDateTime!
-  createdOn: AWSDateTime!
+  updateAt: AWSDateTime!
+  createdAt: AWSDateTime!
 }
 
 enum BookingStatus {
@@ -125,7 +125,7 @@ type RatingsAndFeedback @aws_cognito_user_pools {
   apartment: Apartment!
   apartmentId: String!
   feedback: String!
-  createdOn: AWSTimestamp!
+  createdAt: AWSTimestamp!
 }
 
 input RatingsAndFeedbackInput @aws_cognito_user_pools {
@@ -133,7 +133,7 @@ input RatingsAndFeedbackInput @aws_cognito_user_pools {
   userId: String!
   apartmentId: String!
   feedback: String!
-  createdOn: AWSTimestamp!
+  createdAt: AWSTimestamp!
 }
 
 type Building @aws_cognito_user_pools {
@@ -144,8 +144,8 @@ type Building @aws_cognito_user_pools {
   imageUrls: [String!]!
   numberOfApartments: Int!
   apartments: [Apartment!]
-  updateOn: AWSDateTime!
-  createdOn: AWSDateTime!
+  updateAt: AWSDateTime!
+  createdAt: AWSDateTime!
 }
 
 type Apartment @aws_cognito_user_pools {
@@ -163,7 +163,7 @@ type Apartment @aws_cognito_user_pools {
   numberOfKitchens: Int!
   kitchen: Boolean!
   numberOfRooms: Int!
-  createdOn: AWSDateTime!
+  createdAt: AWSDateTime!
 }
 
 input ApartmentInput @aws_cognito_user_pools {
