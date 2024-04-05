@@ -156,7 +156,7 @@ export type Mutation = {
   createApartment: Apartment;
   createApartmentBooking: Scalars['Boolean']['output'];
   createBuilding: Building;
-  createUserAccount?: Maybe<User>;
+  createUserAccount: User;
   deleteUserAccount: Scalars['Boolean']['output'];
   leaveFeedback: RatingsAndFeedback;
   updateUserAccount: User;
