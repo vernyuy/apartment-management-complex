@@ -9,24 +9,21 @@ export function request(
 ): DynamoDBQueryRequest {
   // add timestamps
   const item = ctx.args!;
-  const sk = `APARTMENT#`
-  const pk = `BUILDING#${item.buildingId}`
+  const sk = `APARTMENT#`;
+  const pk = `BUILDING#${item.buildingId}`;
 
   return {
     operation: "Query",
     query: {
-        expression: 'PK = :pk and begins_with(SK, :sk)',
-        expressionValues: {
-            ":pk": util.dynamodb.toMapValues({"S": pk}),
-            ":sk": util.dynamodb.toMapValues({"S":sk})
-        }
-    }
+      expression: "PK = :pk and begins_with(SK, :sk)",
+      expressionValues: util.dynamodb.toMapValues({ ":pk": pk, ":sk": sk }),
+    },
   };
 }
 
 export function response(
   ctx: Context<
-  QueryGetAllApartmentsPerBuildingArgs,
+    QueryGetAllApartmentsPerBuildingArgs,
     object,
     object,
     object,
