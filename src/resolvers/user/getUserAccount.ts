@@ -9,10 +9,10 @@ export function request(
 
   return {
     operation: 'GetItem',
-    key: {
-      PK: `USER`,
-      SK: `USER#${id}`,
-    }
+    key: util.dynamodb.toMapValues({
+      PK: "USER",
+      SK: `USER#${id}`
+    })
   };
 }
 
