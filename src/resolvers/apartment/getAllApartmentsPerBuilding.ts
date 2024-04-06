@@ -17,8 +17,8 @@ export function request(
     query: {
         expression: 'PK = :pk and begins_with(SK, :sk)',
         expressionValues: {
-            ":pk": pk,
-            ":sk": sk
+            ":pk": util.dynamodb.toMapValues(pk),
+            ":sk": util.dynamodb.toMapValues(sk)
         }
     }
   };
