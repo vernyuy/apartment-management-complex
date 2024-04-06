@@ -36,7 +36,7 @@ export class UserLamdaStacks extends Stack {
 
     new appsync.Resolver(this, "getUserAccountResolver", {
       api: acmsGraphqlApi,
-      typeName: "Mutation",
+      typeName: "Query",
       fieldName: "getUserAccount",
       code: appsync.Code.fromAsset(
         join(__dirname, "./js_resolvers/_before_and_after_mapping_template.js")
