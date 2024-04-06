@@ -10,16 +10,13 @@ export function request(
   // add timestamps
   const item = ctx.args!;
   const pk = `APARTMENT#${item.apartmentId}`
-//   const sk = 'BOOKING#'
+  const sk = 'FEEDBACK#'
 
   return {
     operation: "Query",
     query: {
         expression: 'PK = :pk and begins_with(SK, :sk)',
-        expressionValues: {
-            ":pk": pk,
-            // ":sk": sk
-        }
+        expressionValues: util.dynamodb.toMapValues({ ":pk": pk, ":sk": sk }),
     }
   };
 }

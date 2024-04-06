@@ -30,7 +30,7 @@ type Query {
     @aws_cognito_user_pools
   getApartmentFeedback(apartmentId: String!): [RatingsAndFeedback!]!
     @aws_cognito_user_pools
-  getSingleApartment(apartmentId: String!): [Apartment!]!
+  getSingleApartment(buildingId: String!, apartmentId: String!): [Apartment!]!
     @aws_cognito_user_pools
   getAllApartmentsPerBuilding(buildingId: String!): ApartmentsResult!
     @aws_cognito_user_pools

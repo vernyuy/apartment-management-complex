@@ -7,9 +7,10 @@ export function request(
 
   return {
     operation: 'GetItem',
-    key: {
-      id: ctx.args.apartmentId
-    }
+    key: util.dynamodb.toMapValues({
+      PK: `BUILDING#${ctx.args.buildingId}`,
+      SK: `APARTMENT#${ctx.args.apartmentId}`
+    })
   };
 }
 

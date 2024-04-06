@@ -8,9 +8,9 @@ export function request(
   ctx: Context<QueryGetAllApartmentsPerBuildingArgs>
 ): DynamoDBQueryRequest {
   // add timestamps
-  const item = ctx.args!;
-  const sk = `APARTMENT#`;
+  const item = ctx.args;
   const pk = `BUILDING#${item.buildingId}`;
+  const sk = `APARTMENT#`;
 
   return {
     operation: "Query",

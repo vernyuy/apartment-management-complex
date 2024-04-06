@@ -235,6 +235,7 @@ export type QueryGetApartmentFeedbackArgs = {
 
 export type QueryGetSingleApartmentArgs = {
   apartmentId: Scalars['String']['input'];
+  buildingId: Scalars['String']['input'];
 };
 
 
