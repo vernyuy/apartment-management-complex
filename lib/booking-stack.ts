@@ -66,6 +66,25 @@ const lambdaRole = new Role(this, "bookingLambdaRole", {
         }
       );
 
+       /**
+     * Process SQS Messages Lambda
+     */
+    const processSQSLambda: NodejsFunction = new NodejsFunction(
+        this,
+        "ProcessSqSBookingHandler",
+        {
+          tracing: Tracing.ACTIVE,
+          runtime: lambda.Runtime.NODEJS_16_X,
+          handler: "handler",
+          entry: path.join(
+            __dirname,
+            "lambda-fns/booking",
+            "processSqsBooking.ts"
+          ),
+          memorySize: 1024,
+        }
+      );
+
       // Create a data source for the Lambda function
     const lambdaDataSource = acmsGraphqlApi.addLambdaDataSource('lambda-data-source', bookingLambda);
 
@@ -79,5 +98,12 @@ const lambdaRole = new Role(this, "bookingLambdaRole", {
         fieldName: 'createApartmentBooking',
       });
 
+
+    acmsDatabase.grantWriteData(processSQSLambda);
+    acmsDatabase.grantReadData(bookingLambda);
+    queue.grantSendMessages(bookingLambda);
+    queue.grantConsumeMessages(processSQSLambda);
+    bookingLambda.addEnvironment("ACMS_DB", acmsDatabase.tableName);
+    bookingLambda.addEnvironment("BOOKING_QUEUE_URL", queue.queueUrl);
   }
 }
