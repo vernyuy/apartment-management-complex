@@ -5,6 +5,7 @@ import CreateBookingInput from "./CreateBookingInput";
 
 import { Tracer } from "@aws-lambda-powertools/tracer";
 import createApartmentBooking from "./createApartmentBooking";
+import { MutationCreateApartmentBookingArgs, Booking } from '../../../src/types/appsync'
 
 const namespace = "ApartmentComplexManagementApp";
 const serviceName = "bookingHandler";
@@ -13,7 +14,7 @@ const logger = new Logger({ logLevel: "INFO", serviceName: serviceName });
 const tracer = new Tracer({ serviceName: serviceName });
 
 exports.handler = async (
-  event: AppSyncResolverEvent<CreateBookingInput>,
+  event: AppSyncResolverEvent<MutationCreateApartmentBookingArgs>,
   context: Context
 ) => {
   logger.addContext(context);
