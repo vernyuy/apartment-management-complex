@@ -8,7 +8,7 @@ import { MutationCreateApartmentBookingArgs, Booking } from '../../../src/types/
 import { createItem } from "../../../src/lib/helpers";
 
 async function createApartmentBooking(
-  appsyncInput: CreateBookingInput,
+  appsyncInput: MutationCreateApartmentBookingArgs,
   logger: Logger
 ): Promise<boolean> {
   const documentClient = new DynamoDB.DocumentClient();
@@ -17,6 +17,8 @@ async function createApartmentBooking(
   const createdOn = Date.now().toString();
   const id: string = uuid();
   const sqs = new SQS();
+
+  console.log(appsyncInput.input);
 
   if (BOOKING_QUEUE_URL === undefined) {
     logger.error(`Couldn't get the queue url name`);
