@@ -5,6 +5,8 @@ import CreateBookingInput from "./CreateBookingInput";
 import { BookingEntity } from "./entities/bookingEntity";
 import { MutationCreateApartmentBookingArgs, Booking } from '../../../src/types/appsync'
 
+import { createItem } from "../../../src/lib/helpers";
+
 async function createApartmentBooking(
   appsyncInput: CreateBookingInput,
   logger: Logger
@@ -21,7 +23,7 @@ async function createApartmentBooking(
     throw Error("Couldn't get queue url");
   }
 
-  const bookingInput: BookingEntity = new BookingEntity({
+  const bookingInput = createItem({
     id: id,
     ...appsyncInput.input,
     createdOn,
@@ -49,16 +51,10 @@ async function createApartmentBooking(
     },
   };
 
-  //We want to make sure this particular user doesn't already have a pending booking for this apartment.
-  const response = await documentClient.query(params).promise();
-  if (response.Count != null) {
-    //No pending booking, send booking to SQS
-
-    if (response.Count <= 0) {
-      logger.info(`sqs pre message ${JSON.stringify(bookingInput.toItem())}`);
+      logger.info(`sqs pre message ${JSON.stringify(bookingInput)}`);
       logger.info(`sqs  queue url ${BOOKING_QUEUE_URL}`);
       const sqsParams: SQS.Types.SendMessageRequest = {
-        MessageBody: JSON.stringify(bookingInput.toItem()),
+        MessageBody: JSON.stringify(bookingInput),
         QueueUrl: BOOKING_QUEUE_URL,
       };
 
@@ -69,14 +65,6 @@ async function createApartmentBooking(
         logger.info(`an error occured while sending message to sqs", ${error}`);
         throw Error(`an error occured while sending message to sqs", ${error}`);
       }
-    }
-    //Pending Booking,don't send any message to SQS
-    else {
-      throw new Error("You Already have a pending booking for this apartment");
-    }
-  } else {
-    throw new Error("Error Querying pending bookings");
-  }
 }
 
 export default createApartmentBooking;
