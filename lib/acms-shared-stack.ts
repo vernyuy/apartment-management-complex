@@ -13,10 +13,12 @@ import {
   Table,
 } from "aws-cdk-lib/aws-dynamodb";
 import { ManagedPolicy, Role, ServicePrincipal } from "aws-cdk-lib/aws-iam";
+import { readFileSync } from "fs";
 
 export class AcmsSharedStack extends Stack {
   public readonly acmsDatabase: Table;
   public readonly acmsGraphqlApi: appsync.GraphqlApi;
+  public readonly apiSchema: appsync.CfnGraphQLSchema;
 
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
@@ -44,13 +46,13 @@ export class AcmsSharedStack extends Stack {
         },
       }
     );
-    const dynamoDBRole = new Role(this, "DynamoDBRole", {
-      assumedBy: new ServicePrincipal("appsync.amazonaws.com"),
-    });
+    // const dynamoDBRole = new Role(this, "DynamoDBRole", {
+    //   assumedBy: new ServicePrincipal("appsync.amazonaws.com"),
+    // });
 
-    dynamoDBRole.addManagedPolicy(
-      ManagedPolicy.fromAwsManagedPolicyName("AmazonDynamoDBFullAccess")
-    );
+    // dynamoDBRole.addManagedPolicy(
+    //   ManagedPolicy.fromAwsManagedPolicyName("AmazonDynamoDBFullAccess")
+    // );
 
     const userPoolClient: UserPoolClient = new cognito.UserPoolClient(
       this,
@@ -101,8 +103,14 @@ export class AcmsSharedStack extends Stack {
       },
     });
 
-    //   definition: readFileSync("./schema/schema.graphql").toString(),
-    // });
+    /**
+     * Graphql Schema
+     */
+
+    this.apiSchema = new appsync.CfnGraphQLSchema(this, "ACMSGraphqlApiSchema", {
+      apiId: this.acmsGraphqlApi.apiId,
+      definition: readFileSync("./schema/schema.graphql").toString(),
+    });
 
     /**
      * Database
@@ -139,8 +147,6 @@ export class AcmsSharedStack extends Stack {
 
       projectionType: ProjectionType.ALL,
     });
-
-    // this.acmsTableDatasource = this.acmsGraphqlApi.addDynamoDbDataSource('postDataSource', this.acmsDatabase);
 
 
     /**

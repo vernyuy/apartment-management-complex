@@ -13,7 +13,7 @@ import * as path from "path";
 import { NodejsFunction } from "aws-cdk-lib/aws-lambda-nodejs";
 import { Tracing } from "aws-cdk-lib/aws-lambda";
 import { aws_iam } from "aws-cdk-lib";
-import { Table } from "aws-cdk-lib/aws-dynamodb";
+import * as ddb from "aws-cdk-lib/aws-dynamodb";
 import { Construct } from "constructs";
 import * as appsync from "aws-cdk-lib/aws-appsync";
 import { bundleAppSyncResolver } from "./helpers";
@@ -22,8 +22,8 @@ import * as sqs from  "aws-cdk-lib/aws-sqs";
 
 interface BookingLambdaStackProps extends StackProps {
   acmsGraphqlApi: appsync.GraphqlApi;
-  // apiSchema: CfnGraphQLSchema;
-  acmsDatabase: Table;
+  // apiSchema: appsync.CfnGraphQLSchema;
+  acmsDatabase: ddb.Table;
   // acmsTableDatasource: CfnDataSource;
 }
 
@@ -63,6 +63,12 @@ const lambdaRole = new Role(this, "bookingLambdaRole", {
           handler: "handler",
           entry: path.join(__dirname, "lambda-fns/booking", "app.ts"),
           memorySize: 1024,
+          environment:{
+
+            BOOKING_QUEUE_URL: queue.queueUrl,
+
+            ACMS_DB: acmsDatabase.tableName,
+          }
         }
       );
 
@@ -93,17 +99,20 @@ const lambdaRole = new Role(this, "bookingLambdaRole", {
     //     fieldName: 'listNotes',
     //   });
   
-      lambdaDataSource.createResolver('mutation-resolver', {
+      const lambdaResolver = lambdaDataSource.createResolver('mutation-resolver', {
         typeName: 'Mutation',
         fieldName: 'createApartmentBooking',
       });
 
-
-    acmsDatabase.grantWriteData(processSQSLambda);
-    acmsDatabase.grantReadData(bookingLambda);
+      // lambdaResolver.node.addDependency(acmsDatabase);
+      // lambdaResolver.node.addDependency(acmsGraphqlApi);
+      // lambdaResolver.node.addDependency(apiSchema);
+      // processSQSLambda.node.addDependency(acmsDatabase)
+    // acmsDatabase.grantWriteData(processSQSLambda);
+    // acmsDatabase.grantReadData(bookingLambda);
     queue.grantSendMessages(bookingLambda);
     queue.grantConsumeMessages(processSQSLambda);
-    bookingLambda.addEnvironment("ACMS_DB", acmsDatabase.tableName);
+    // bookingLambda.addEnvironment("ACMS_DB", acmsDatabase.tableName);
     bookingLambda.addEnvironment("BOOKING_QUEUE_URL", queue.queueUrl);
   }
 }
