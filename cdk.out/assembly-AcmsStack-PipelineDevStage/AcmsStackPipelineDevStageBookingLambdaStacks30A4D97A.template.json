@@ -1,0 +1,523 @@
+{
+ "Resources": {
+  "DeadLetterQueue9F481546": {
+   "Type": "AWS::SQS::Queue",
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "AcmsStack/PipelineDevStage/BookingLambdaStacks/DeadLetterQueue/Resource"
+   }
+  },
+  "bookingQueue83A139AE": {
+   "Type": "AWS::SQS::Queue",
+   "Properties": {
+    "RedrivePolicy": {
+     "deadLetterTargetArn": {
+      "Fn::GetAtt": [
+       "DeadLetterQueue9F481546",
+       "Arn"
+      ]
+     },
+     "maxReceiveCount": 10
+    }
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "AcmsStack/PipelineDevStage/BookingLambdaStacks/bookingQueue/Resource"
+   }
+  },
+  "bookingLambdaRole0163E65A": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSAppSyncPushToCloudWatchLogs"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "AcmsStack/PipelineDevStage/BookingLambdaStacks/bookingLambdaRole/Resource"
+   }
+  },
+  "AcmsBookingHandlerServiceRole9B3C000D": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "AcmsStack/PipelineDevStage/BookingLambdaStacks/AcmsBookingHandler/ServiceRole/Resource"
+   }
+  },
+  "AcmsBookingHandlerServiceRoleDefaultPolicy71C8C9CD": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "xray:PutTelemetryRecords",
+        "xray:PutTraceSegments"
+       ],
+       "Effect": "Allow",
+       "Resource": "*"
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "AcmsBookingHandlerServiceRoleDefaultPolicy71C8C9CD",
+    "Roles": [
+     {
+      "Ref": "AcmsBookingHandlerServiceRole9B3C000D"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "AcmsStack/PipelineDevStage/BookingLambdaStacks/AcmsBookingHandler/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "AcmsBookingHandler79FB7E1B": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": {
+      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+     },
+     "S3Key": "b9d2c5db2e6a435c110469e1ffeddbd5f35ae71054c4fd2c9cab80854f7a871d.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "BOOKING_QUEUE_URL": {
+       "Ref": "bookingQueue83A139AE"
+      },
+      "ACMS_DB": {
+       "Fn::ImportValue": "dev-AcmsSharedStack:ExportsOutputRefACMSDynamoDbTable4CB9A8F1B2B26CA7"
+      },
+      "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1"
+     }
+    },
+    "Handler": "index.handler",
+    "MemorySize": 1024,
+    "Role": {
+     "Fn::GetAtt": [
+      "AcmsBookingHandlerServiceRole9B3C000D",
+      "Arn"
+     ]
+    },
+    "Runtime": "nodejs16.x",
+    "TracingConfig": {
+     "Mode": "Active"
+    }
+   },
+   "DependsOn": [
+    "AcmsBookingHandlerServiceRoleDefaultPolicy71C8C9CD",
+    "AcmsBookingHandlerServiceRole9B3C000D"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "AcmsStack/PipelineDevStage/BookingLambdaStacks/AcmsBookingHandler/Resource",
+    "aws:asset:path": "../asset.b9d2c5db2e6a435c110469e1ffeddbd5f35ae71054c4fd2c9cab80854f7a871d",
+    "aws:asset:is-bundled": true,
+    "aws:asset:property": "Code"
+   }
+  },
+  "ProcessSqSBookingHandlerServiceRoleA5225B56": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "AcmsStack/PipelineDevStage/BookingLambdaStacks/ProcessSqSBookingHandler/ServiceRole/Resource"
+   }
+  },
+  "ProcessSqSBookingHandlerServiceRoleDefaultPolicy03BACB82": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "xray:PutTelemetryRecords",
+        "xray:PutTraceSegments"
+       ],
+       "Effect": "Allow",
+       "Resource": "*"
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "ProcessSqSBookingHandlerServiceRoleDefaultPolicy03BACB82",
+    "Roles": [
+     {
+      "Ref": "ProcessSqSBookingHandlerServiceRoleA5225B56"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "AcmsStack/PipelineDevStage/BookingLambdaStacks/ProcessSqSBookingHandler/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "ProcessSqSBookingHandler4BC1D727": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": {
+      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+     },
+     "S3Key": "40f8af402671d3b74f47e0ec25c546be67d1c158e3aeb1d6c15a25217704af6c.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1"
+     }
+    },
+    "Handler": "index.handler",
+    "MemorySize": 1024,
+    "Role": {
+     "Fn::GetAtt": [
+      "ProcessSqSBookingHandlerServiceRoleA5225B56",
+      "Arn"
+     ]
+    },
+    "Runtime": "nodejs16.x",
+    "TracingConfig": {
+     "Mode": "Active"
+    }
+   },
+   "DependsOn": [
+    "ProcessSqSBookingHandlerServiceRoleDefaultPolicy03BACB82",
+    "ProcessSqSBookingHandlerServiceRoleA5225B56"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "AcmsStack/PipelineDevStage/BookingLambdaStacks/ProcessSqSBookingHandler/Resource",
+    "aws:asset:path": "../asset.40f8af402671d3b74f47e0ec25c546be67d1c158e3aeb1d6c15a25217704af6c",
+    "aws:asset:is-bundled": true,
+    "aws:asset:property": "Code"
+   }
+  },
+  "CDKMetadata": {
+   "Type": "AWS::CDK::Metadata",
+   "Properties": {
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/zWNWw6CQAxF1+L/UAXcgJL4aRQXQOpQTHl0op2RGMLeDYN+ndvHyc0gTfeQbnDUxNZd0vMdpptH2xkctZr0qTBdAwUyRSMxzIZxgKl0fdxFXlzP9rOMa5pNj8O9xkpcTa3COeIUxHp2YjSvUJW8wmGB0RyOwXbkj6j0U6Fo5C/MpiR14WXJROHm8cHyiPX/Q9FI4aTm9X/phVa372wHaQbZplXm5BXE80BQrvwCd2m5vv0AAAA="
+   },
+   "Metadata": {
+    "aws:cdk:path": "AcmsStack/PipelineDevStage/BookingLambdaStacks/CDKMetadata/Default"
+   },
+   "Condition": "CDKMetadataAvailable"
+  }
+ },
+ "Conditions": {
+  "CDKMetadataAvailable": {
+   "Fn::Or": [
+    {
+     "Fn::Or": [
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "af-south-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-east-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-northeast-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-northeast-2"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-south-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-southeast-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-southeast-2"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ca-central-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "cn-north-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "cn-northwest-1"
+       ]
+      }
+     ]
+    },
+    {
+     "Fn::Or": [
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-central-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-north-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-south-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-west-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-west-2"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-west-3"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "il-central-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "me-central-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "me-south-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "sa-east-1"
+       ]
+      }
+     ]
+    },
+    {
+     "Fn::Or": [
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "us-east-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "us-east-2"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "us-west-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "us-west-2"
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ },
+ "Parameters": {
+  "BootstrapVersion": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/cdk-bootstrap/hnb659fds/version",
+   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+  }
+ },
+ "Rules": {
+  "CheckBootstrapVersion": {
+   "Assertions": [
+    {
+     "Assert": {
+      "Fn::Not": [
+       {
+        "Fn::Contains": [
+         [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+         ],
+         {
+          "Ref": "BootstrapVersion"
+         }
+        ]
+       }
+      ]
+     },
+     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+    }
+   ]
+  }
+ }
+}

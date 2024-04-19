@@ -1,0 +1,720 @@
+{
+  "version": "35.0.0",
+  "artifacts": {
+    "AcmsStackPipelineDevStageAcmsSharedStack90259D17.assets": {
+      "type": "cdk:asset-manifest",
+      "properties": {
+        "file": "AcmsStackPipelineDevStageAcmsSharedStack90259D17.assets.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+      }
+    },
+    "AcmsStackPipelineDevStageAcmsSharedStack90259D17": {
+      "type": "aws:cloudformation:stack",
+      "environment": "aws://unknown-account/unknown-region",
+      "properties": {
+        "templateFile": "AcmsStackPipelineDevStageAcmsSharedStack90259D17.template.json",
+        "terminationProtection": false,
+        "validateOnSynth": true,
+        "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-${AWS::Region}",
+        "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-${AWS::Region}",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/22e6aa4884a1104d9c98ddd40b35ebcf12f2018a8123c9812eed43eb6c4bf712.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
+        "additionalDependencies": [
+          "AcmsStackPipelineDevStageAcmsSharedStack90259D17.assets"
+        ],
+        "lookupRole": {
+          "arn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-lookup-role-${AWS::AccountId}-${AWS::Region}",
+          "requiresBootstrapStackVersion": 8,
+          "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+        },
+        "stackName": "dev-AcmsSharedStack"
+      },
+      "dependencies": [
+        "AcmsStackPipelineDevStageAcmsSharedStack90259D17.assets"
+      ],
+      "metadata": {
+        "/AcmsStack/PipelineDevStage/AcmsSharedStack/ACMSCognitoUserPool/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ACMSCognitoUserPool31F5ADEC"
+          }
+        ],
+        "/AcmsStack/PipelineDevStage/AcmsSharedStack/ACMSUserPoolClient/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ACMSUserPoolClient8C32E361"
+          }
+        ],
+        "/AcmsStack/PipelineDevStage/AcmsSharedStack/appSyncCloudWatchLogs/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "appSyncCloudWatchLogsFC2B744C"
+          }
+        ],
+        "/AcmsStack/PipelineDevStage/AcmsSharedStack/Api/ApiLogsRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ApiApiLogsRole90293F72"
+          }
+        ],
+        "/AcmsStack/PipelineDevStage/AcmsSharedStack/Api/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ApiF70053CD"
+          }
+        ],
+        "/AcmsStack/PipelineDevStage/AcmsSharedStack/Api/Schema": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ApiSchema510EECD7"
+          }
+        ],
+        "/AcmsStack/PipelineDevStage/AcmsSharedStack/Api/DefaultApiKey": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ApiDefaultApiKeyF991C37B"
+          }
+        ],
+        "/AcmsStack/PipelineDevStage/AcmsSharedStack/Api/acmsdbs/ServiceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ApiacmsdbsServiceRole46A8E60C"
+          }
+        ],
+        "/AcmsStack/PipelineDevStage/AcmsSharedStack/Api/acmsdbs/ServiceRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ApiacmsdbsServiceRoleDefaultPolicy6A69C1BE"
+          }
+        ],
+        "/AcmsStack/PipelineDevStage/AcmsSharedStack/Api/acmsdbs/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ApiacmsdbsBDC28288"
+          }
+        ],
+        "/AcmsStack/PipelineDevStage/AcmsSharedStack/Api/acmsBuildingDataSource/ServiceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ApiacmsBuildingDataSourceServiceRoleF7FE8446"
+          }
+        ],
+        "/AcmsStack/PipelineDevStage/AcmsSharedStack/Api/acmsBuildingDataSource/ServiceRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ApiacmsBuildingDataSourceServiceRoleDefaultPolicyEC80BB43"
+          }
+        ],
+        "/AcmsStack/PipelineDevStage/AcmsSharedStack/Api/acmsBuildingDataSource/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ApiacmsBuildingDataSource017D27B4"
+          }
+        ],
+        "/AcmsStack/PipelineDevStage/AcmsSharedStack/Api/createApartment/ServiceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ApicreateApartmentServiceRole1DF793B2"
+          }
+        ],
+        "/AcmsStack/PipelineDevStage/AcmsSharedStack/Api/createApartment/ServiceRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ApicreateApartmentServiceRoleDefaultPolicyD4216741"
+          }
+        ],
+        "/AcmsStack/PipelineDevStage/AcmsSharedStack/Api/createApartment/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ApicreateApartment8741C640"
+          }
+        ],
+        "/AcmsStack/PipelineDevStage/AcmsSharedStack/Api/getAllApartmentsPerBuilding/ServiceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ApigetAllApartmentsPerBuildingServiceRole00A742B0"
+          }
+        ],
+        "/AcmsStack/PipelineDevStage/AcmsSharedStack/Api/getAllApartmentsPerBuilding/ServiceRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ApigetAllApartmentsPerBuildingServiceRoleDefaultPolicy00FC94A8"
+          }
+        ],
+        "/AcmsStack/PipelineDevStage/AcmsSharedStack/Api/getAllApartmentsPerBuilding/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ApigetAllApartmentsPerBuilding95D3B1D5"
+          }
+        ],
+        "/AcmsStack/PipelineDevStage/AcmsSharedStack/Api/acmsFeedbackDataSource/ServiceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ApiacmsFeedbackDataSourceServiceRole83904D28"
+          }
+        ],
+        "/AcmsStack/PipelineDevStage/AcmsSharedStack/Api/acmsFeedbackDataSource/ServiceRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ApiacmsFeedbackDataSourceServiceRoleDefaultPolicyF4472219"
+          }
+        ],
+        "/AcmsStack/PipelineDevStage/AcmsSharedStack/Api/acmsFeedbackDataSource/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ApiacmsFeedbackDataSource4DAE2131"
+          }
+        ],
+        "/AcmsStack/PipelineDevStage/AcmsSharedStack/Api/FeedbackDataSource/ServiceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ApiFeedbackDataSourceServiceRole649C2B3C"
+          }
+        ],
+        "/AcmsStack/PipelineDevStage/AcmsSharedStack/Api/FeedbackDataSource/ServiceRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ApiFeedbackDataSourceServiceRoleDefaultPolicy89D260AB"
+          }
+        ],
+        "/AcmsStack/PipelineDevStage/AcmsSharedStack/Api/FeedbackDataSource/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ApiFeedbackDataSource633CDE73"
+          }
+        ],
+        "/AcmsStack/PipelineDevStage/AcmsSharedStack/ACMSGraphqlApiSchema": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ACMSGraphqlApiSchema"
+          }
+        ],
+        "/AcmsStack/PipelineDevStage/AcmsSharedStack/ACMSDynamoDbTable": [
+          {
+            "type": "aws:cdk:hasPhysicalName",
+            "data": {
+              "Ref": "ACMSDynamoDbTable4CB9A8F1"
+            }
+          }
+        ],
+        "/AcmsStack/PipelineDevStage/AcmsSharedStack/ACMSDynamoDbTable/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ACMSDynamoDbTable4CB9A8F1"
+          }
+        ],
+        "/AcmsStack/PipelineDevStage/AcmsSharedStack/UserPoolId": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "UserPoolId"
+          }
+        ],
+        "/AcmsStack/PipelineDevStage/AcmsSharedStack/UserPoolClientId": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "UserPoolClientId"
+          }
+        ],
+        "/AcmsStack/PipelineDevStage/AcmsSharedStack/GraphQLAPI ID": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "GraphQLAPIID"
+          }
+        ],
+        "/AcmsStack/PipelineDevStage/AcmsSharedStack/GraphQLAPI URL": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "GraphQLAPIURL"
+          }
+        ],
+        "/AcmsStack/PipelineDevStage/AcmsSharedStack/CDKMetadata/Default": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CDKMetadata"
+          }
+        ],
+        "/AcmsStack/PipelineDevStage/AcmsSharedStack/CDKMetadata/Condition": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CDKMetadataAvailable"
+          }
+        ],
+        "/AcmsStack/PipelineDevStage/AcmsSharedStack/Exports/Output{\"Fn::GetAtt\":[\"ApiF70053CD\",\"ApiId\"]}": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ExportsOutputFnGetAttApiF70053CDApiIdF185726B"
+          }
+        ],
+        "/AcmsStack/PipelineDevStage/AcmsSharedStack/Exports/Output{\"Ref\":\"ACMSDynamoDbTable4CB9A8F1\"}": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ExportsOutputRefACMSDynamoDbTable4CB9A8F1B2B26CA7"
+          }
+        ],
+        "/AcmsStack/PipelineDevStage/AcmsSharedStack/BootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "BootstrapVersion"
+          }
+        ],
+        "/AcmsStack/PipelineDevStage/AcmsSharedStack/CheckBootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CheckBootstrapVersion"
+          }
+        ]
+      },
+      "displayName": "AcmsStack/PipelineDevStage/AcmsSharedStack"
+    },
+    "AcmsStackPipelineDevStageUserLambdaStacksAB7D01A6.assets": {
+      "type": "cdk:asset-manifest",
+      "properties": {
+        "file": "AcmsStackPipelineDevStageUserLambdaStacksAB7D01A6.assets.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+      }
+    },
+    "AcmsStackPipelineDevStageUserLambdaStacksAB7D01A6": {
+      "type": "aws:cloudformation:stack",
+      "environment": "aws://unknown-account/unknown-region",
+      "properties": {
+        "templateFile": "AcmsStackPipelineDevStageUserLambdaStacksAB7D01A6.template.json",
+        "terminationProtection": false,
+        "validateOnSynth": true,
+        "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-${AWS::Region}",
+        "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-${AWS::Region}",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/6c6380030911f9744f21f2055e934a316a3d50e307064010598e9e99f344a1dc.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
+        "additionalDependencies": [
+          "AcmsStackPipelineDevStageUserLambdaStacksAB7D01A6.assets"
+        ],
+        "lookupRole": {
+          "arn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-lookup-role-${AWS::AccountId}-${AWS::Region}",
+          "requiresBootstrapStackVersion": 8,
+          "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+        },
+        "stackName": "dev-UserLambdaStacks"
+      },
+      "dependencies": [
+        "AcmsStackPipelineDevStageAcmsSharedStack90259D17",
+        "AcmsStackPipelineDevStageUserLambdaStacksAB7D01A6.assets"
+      ],
+      "metadata": {
+        "/AcmsStack/PipelineDevStage/UserLambdaStacks/createUserAccount/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "createUserAccount0AFF667F"
+          }
+        ],
+        "/AcmsStack/PipelineDevStage/UserLambdaStacks/getUserAccount/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "getUserAccountE0002423"
+          }
+        ],
+        "/AcmsStack/PipelineDevStage/UserLambdaStacks/getUserAccountResolver/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "getUserAccountResolver74DFCCAD"
+          }
+        ],
+        "/AcmsStack/PipelineDevStage/UserLambdaStacks/createUserResolver/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "createUserResolver5CF490FA"
+          }
+        ],
+        "/AcmsStack/PipelineDevStage/UserLambdaStacks/CDKMetadata/Default": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CDKMetadata"
+          }
+        ],
+        "/AcmsStack/PipelineDevStage/UserLambdaStacks/CDKMetadata/Condition": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CDKMetadataAvailable"
+          }
+        ],
+        "/AcmsStack/PipelineDevStage/UserLambdaStacks/BootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "BootstrapVersion"
+          }
+        ],
+        "/AcmsStack/PipelineDevStage/UserLambdaStacks/CheckBootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CheckBootstrapVersion"
+          }
+        ]
+      },
+      "displayName": "AcmsStack/PipelineDevStage/UserLambdaStacks"
+    },
+    "AcmsStackPipelineDevStageBuildingLambdaStacks32BE71AA.assets": {
+      "type": "cdk:asset-manifest",
+      "properties": {
+        "file": "AcmsStackPipelineDevStageBuildingLambdaStacks32BE71AA.assets.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+      }
+    },
+    "AcmsStackPipelineDevStageBuildingLambdaStacks32BE71AA": {
+      "type": "aws:cloudformation:stack",
+      "environment": "aws://unknown-account/unknown-region",
+      "properties": {
+        "templateFile": "AcmsStackPipelineDevStageBuildingLambdaStacks32BE71AA.template.json",
+        "terminationProtection": false,
+        "validateOnSynth": true,
+        "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-${AWS::Region}",
+        "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-${AWS::Region}",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/a7515712d1bdfa774414d7e143d6db5ed22c53d559190c6e1b72c667d9462a62.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
+        "additionalDependencies": [
+          "AcmsStackPipelineDevStageBuildingLambdaStacks32BE71AA.assets"
+        ],
+        "lookupRole": {
+          "arn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-lookup-role-${AWS::AccountId}-${AWS::Region}",
+          "requiresBootstrapStackVersion": 8,
+          "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+        },
+        "stackName": "dev-BuildingLambdaStacks"
+      },
+      "dependencies": [
+        "AcmsStackPipelineDevStageAcmsSharedStack90259D17",
+        "AcmsStackPipelineDevStageBuildingLambdaStacks32BE71AA.assets"
+      ],
+      "metadata": {
+        "/AcmsStack/PipelineDevStage/BuildingLambdaStacks/createBuilding/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "createBuildingB6C98424"
+          }
+        ],
+        "/AcmsStack/PipelineDevStage/BuildingLambdaStacks/createBuildingResolver/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "createBuildingResolver92075389"
+          }
+        ],
+        "/AcmsStack/PipelineDevStage/BuildingLambdaStacks/CDKMetadata/Default": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CDKMetadata"
+          }
+        ],
+        "/AcmsStack/PipelineDevStage/BuildingLambdaStacks/CDKMetadata/Condition": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CDKMetadataAvailable"
+          }
+        ],
+        "/AcmsStack/PipelineDevStage/BuildingLambdaStacks/BootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "BootstrapVersion"
+          }
+        ],
+        "/AcmsStack/PipelineDevStage/BuildingLambdaStacks/CheckBootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CheckBootstrapVersion"
+          }
+        ]
+      },
+      "displayName": "AcmsStack/PipelineDevStage/BuildingLambdaStacks"
+    },
+    "AcmsStackPipelineDevStageApartmentLambdaStacks30AA4D44.assets": {
+      "type": "cdk:asset-manifest",
+      "properties": {
+        "file": "AcmsStackPipelineDevStageApartmentLambdaStacks30AA4D44.assets.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+      }
+    },
+    "AcmsStackPipelineDevStageApartmentLambdaStacks30AA4D44": {
+      "type": "aws:cloudformation:stack",
+      "environment": "aws://unknown-account/unknown-region",
+      "properties": {
+        "templateFile": "AcmsStackPipelineDevStageApartmentLambdaStacks30AA4D44.template.json",
+        "terminationProtection": false,
+        "validateOnSynth": true,
+        "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-${AWS::Region}",
+        "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-${AWS::Region}",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/69b660d0b4437578ac9d5bd478c38f362b44f35650f30662d596761962e87e8b.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
+        "additionalDependencies": [
+          "AcmsStackPipelineDevStageApartmentLambdaStacks30AA4D44.assets"
+        ],
+        "lookupRole": {
+          "arn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-lookup-role-${AWS::AccountId}-${AWS::Region}",
+          "requiresBootstrapStackVersion": 8,
+          "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+        },
+        "stackName": "dev-ApartmentLambdaStacks"
+      },
+      "dependencies": [
+        "AcmsStackPipelineDevStageAcmsSharedStack90259D17",
+        "AcmsStackPipelineDevStageApartmentLambdaStacks30AA4D44.assets"
+      ],
+      "metadata": {
+        "/AcmsStack/PipelineDevStage/ApartmentLambdaStacks/createApartment/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "createApartmentA2BA1144"
+          }
+        ],
+        "/AcmsStack/PipelineDevStage/ApartmentLambdaStacks/createApartmentResolver/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "createApartmentResolver23253FB1"
+          }
+        ],
+        "/AcmsStack/PipelineDevStage/ApartmentLambdaStacks/getAllApartmentsPerBuilding/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "getAllApartmentsPerBuildingB362FF28"
+          }
+        ],
+        "/AcmsStack/PipelineDevStage/ApartmentLambdaStacks/getAllApartmentsPerBuildingResolver/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "getAllApartmentsPerBuildingResolverCF3279A7"
+          }
+        ],
+        "/AcmsStack/PipelineDevStage/ApartmentLambdaStacks/CDKMetadata/Default": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CDKMetadata"
+          }
+        ],
+        "/AcmsStack/PipelineDevStage/ApartmentLambdaStacks/CDKMetadata/Condition": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CDKMetadataAvailable"
+          }
+        ],
+        "/AcmsStack/PipelineDevStage/ApartmentLambdaStacks/BootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "BootstrapVersion"
+          }
+        ],
+        "/AcmsStack/PipelineDevStage/ApartmentLambdaStacks/CheckBootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CheckBootstrapVersion"
+          }
+        ]
+      },
+      "displayName": "AcmsStack/PipelineDevStage/ApartmentLambdaStacks"
+    },
+    "AcmsStackPipelineDevStageRatingsAndFeedbackStackE9D53A90.assets": {
+      "type": "cdk:asset-manifest",
+      "properties": {
+        "file": "AcmsStackPipelineDevStageRatingsAndFeedbackStackE9D53A90.assets.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+      }
+    },
+    "AcmsStackPipelineDevStageRatingsAndFeedbackStackE9D53A90": {
+      "type": "aws:cloudformation:stack",
+      "environment": "aws://unknown-account/unknown-region",
+      "properties": {
+        "templateFile": "AcmsStackPipelineDevStageRatingsAndFeedbackStackE9D53A90.template.json",
+        "terminationProtection": false,
+        "validateOnSynth": true,
+        "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-${AWS::Region}",
+        "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-${AWS::Region}",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/9410a4eaa58e7ce3c90e9ba780222af793b911cbcfe7e54706f0e7233feb96ac.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
+        "additionalDependencies": [
+          "AcmsStackPipelineDevStageRatingsAndFeedbackStackE9D53A90.assets"
+        ],
+        "lookupRole": {
+          "arn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-lookup-role-${AWS::AccountId}-${AWS::Region}",
+          "requiresBootstrapStackVersion": 8,
+          "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+        },
+        "stackName": "dev-RatingsAndFeedbackStack"
+      },
+      "dependencies": [
+        "AcmsStackPipelineDevStageAcmsSharedStack90259D17",
+        "AcmsStackPipelineDevStageRatingsAndFeedbackStackE9D53A90.assets"
+      ],
+      "metadata": {
+        "/AcmsStack/PipelineDevStage/RatingsAndFeedbackStack/leaveFeedback/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "leaveFeedbackE79A0CC6"
+          }
+        ],
+        "/AcmsStack/PipelineDevStage/RatingsAndFeedbackStack/leaveFeedbackResolver/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "leaveFeedbackResolver61B68511"
+          }
+        ],
+        "/AcmsStack/PipelineDevStage/RatingsAndFeedbackStack/ApartmentFeedback/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ApartmentFeedback64A59AD4"
+          }
+        ],
+        "/AcmsStack/PipelineDevStage/RatingsAndFeedbackStack/getApartmentFeedbackResolver/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "getApartmentFeedbackResolver3785FD45"
+          }
+        ],
+        "/AcmsStack/PipelineDevStage/RatingsAndFeedbackStack/CDKMetadata/Default": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CDKMetadata"
+          }
+        ],
+        "/AcmsStack/PipelineDevStage/RatingsAndFeedbackStack/CDKMetadata/Condition": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CDKMetadataAvailable"
+          }
+        ],
+        "/AcmsStack/PipelineDevStage/RatingsAndFeedbackStack/BootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "BootstrapVersion"
+          }
+        ],
+        "/AcmsStack/PipelineDevStage/RatingsAndFeedbackStack/CheckBootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CheckBootstrapVersion"
+          }
+        ]
+      },
+      "displayName": "AcmsStack/PipelineDevStage/RatingsAndFeedbackStack"
+    },
+    "AcmsStackPipelineDevStageBookingLambdaStacks30A4D97A.assets": {
+      "type": "cdk:asset-manifest",
+      "properties": {
+        "file": "AcmsStackPipelineDevStageBookingLambdaStacks30A4D97A.assets.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+      }
+    },
+    "AcmsStackPipelineDevStageBookingLambdaStacks30A4D97A": {
+      "type": "aws:cloudformation:stack",
+      "environment": "aws://unknown-account/unknown-region",
+      "properties": {
+        "templateFile": "AcmsStackPipelineDevStageBookingLambdaStacks30A4D97A.template.json",
+        "terminationProtection": false,
+        "validateOnSynth": true,
+        "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-${AWS::Region}",
+        "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-${AWS::Region}",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/bb2e682c781e277923ac7a199f821e4b29658c86384404b92c6215fa7d04940c.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
+        "additionalDependencies": [
+          "AcmsStackPipelineDevStageBookingLambdaStacks30A4D97A.assets"
+        ],
+        "lookupRole": {
+          "arn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-lookup-role-${AWS::AccountId}-${AWS::Region}",
+          "requiresBootstrapStackVersion": 8,
+          "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+        },
+        "stackName": "dev-BookingLambdaStacks"
+      },
+      "dependencies": [
+        "AcmsStackPipelineDevStageAcmsSharedStack90259D17",
+        "AcmsStackPipelineDevStageBookingLambdaStacks30A4D97A.assets"
+      ],
+      "metadata": {
+        "/AcmsStack/PipelineDevStage/BookingLambdaStacks/DeadLetterQueue/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DeadLetterQueue9F481546"
+          }
+        ],
+        "/AcmsStack/PipelineDevStage/BookingLambdaStacks/bookingQueue/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "bookingQueue83A139AE"
+          }
+        ],
+        "/AcmsStack/PipelineDevStage/BookingLambdaStacks/bookingLambdaRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "bookingLambdaRole0163E65A"
+          }
+        ],
+        "/AcmsStack/PipelineDevStage/BookingLambdaStacks/AcmsBookingHandler/ServiceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AcmsBookingHandlerServiceRole9B3C000D"
+          }
+        ],
+        "/AcmsStack/PipelineDevStage/BookingLambdaStacks/AcmsBookingHandler/ServiceRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AcmsBookingHandlerServiceRoleDefaultPolicy71C8C9CD"
+          }
+        ],
+        "/AcmsStack/PipelineDevStage/BookingLambdaStacks/AcmsBookingHandler/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AcmsBookingHandler79FB7E1B"
+          }
+        ],
+        "/AcmsStack/PipelineDevStage/BookingLambdaStacks/ProcessSqSBookingHandler/ServiceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ProcessSqSBookingHandlerServiceRoleA5225B56"
+          }
+        ],
+        "/AcmsStack/PipelineDevStage/BookingLambdaStacks/ProcessSqSBookingHandler/ServiceRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ProcessSqSBookingHandlerServiceRoleDefaultPolicy03BACB82"
+          }
+        ],
+        "/AcmsStack/PipelineDevStage/BookingLambdaStacks/ProcessSqSBookingHandler/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ProcessSqSBookingHandler4BC1D727"
+          }
+        ],
+        "/AcmsStack/PipelineDevStage/BookingLambdaStacks/CDKMetadata/Default": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CDKMetadata"
+          }
+        ],
+        "/AcmsStack/PipelineDevStage/BookingLambdaStacks/CDKMetadata/Condition": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CDKMetadataAvailable"
+          }
+        ],
+        "/AcmsStack/PipelineDevStage/BookingLambdaStacks/BootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "BootstrapVersion"
+          }
+        ],
+        "/AcmsStack/PipelineDevStage/BookingLambdaStacks/CheckBootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CheckBootstrapVersion"
+          }
+        ]
+      },
+      "displayName": "AcmsStack/PipelineDevStage/BookingLambdaStacks"
+    }
+  }
+}

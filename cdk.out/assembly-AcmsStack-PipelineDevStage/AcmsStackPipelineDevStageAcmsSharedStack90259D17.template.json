@@ -1,0 +1,1223 @@
+{
+ "Resources": {
+  "ACMSCognitoUserPool31F5ADEC": {
+   "Type": "AWS::Cognito::UserPool",
+   "Properties": {
+    "AdminCreateUserConfig": {
+     "AllowAdminCreateUserOnly": false
+    },
+    "AutoVerifiedAttributes": [
+     "email"
+    ],
+    "EmailVerificationMessage": "The verification code to your new account is {####}",
+    "EmailVerificationSubject": "Verify your new account",
+    "Schema": [
+     {
+      "Mutable": true,
+      "Name": "email",
+      "Required": true
+     }
+    ],
+    "SmsVerificationMessage": "The verification code to your new account is {####}",
+    "VerificationMessageTemplate": {
+     "DefaultEmailOption": "CONFIRM_WITH_CODE",
+     "EmailMessage": "The verification code to your new account is {####}",
+     "EmailSubject": "Verify your new account",
+     "SmsMessage": "The verification code to your new account is {####}"
+    }
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "AcmsStack/PipelineDevStage/AcmsSharedStack/ACMSCognitoUserPool/Resource"
+   }
+  },
+  "ACMSUserPoolClient8C32E361": {
+   "Type": "AWS::Cognito::UserPoolClient",
+   "Properties": {
+    "AllowedOAuthFlows": [
+     "implicit",
+     "code"
+    ],
+    "AllowedOAuthFlowsUserPoolClient": true,
+    "AllowedOAuthScopes": [
+     "profile",
+     "phone",
+     "email",
+     "openid",
+     "aws.cognito.signin.user.admin"
+    ],
+    "CallbackURLs": [
+     "https://example.com"
+    ],
+    "SupportedIdentityProviders": [
+     "COGNITO"
+    ],
+    "UserPoolId": {
+     "Ref": "ACMSCognitoUserPool31F5ADEC"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "AcmsStack/PipelineDevStage/AcmsSharedStack/ACMSUserPoolClient/Resource"
+   }
+  },
+  "appSyncCloudWatchLogsFC2B744C": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "appsync.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSAppSyncPushToCloudWatchLogs"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "AcmsStack/PipelineDevStage/AcmsSharedStack/appSyncCloudWatchLogs/Resource"
+   }
+  },
+  "ApiApiLogsRole90293F72": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "appsync.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSAppSyncPushToCloudWatchLogs"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "AcmsStack/PipelineDevStage/AcmsSharedStack/Api/ApiLogsRole/Resource"
+   }
+  },
+  "ApiF70053CD": {
+   "Type": "AWS::AppSync::GraphQLApi",
+   "Properties": {
+    "AdditionalAuthenticationProviders": [
+     {
+      "AuthenticationType": "AMAZON_COGNITO_USER_POOLS",
+      "UserPoolConfig": {
+       "AwsRegion": {
+        "Ref": "AWS::Region"
+       },
+       "UserPoolId": {
+        "Ref": "ACMSCognitoUserPool31F5ADEC"
+       }
+      }
+     }
+    ],
+    "AuthenticationType": "API_KEY",
+    "LogConfig": {
+     "CloudWatchLogsRoleArn": {
+      "Fn::GetAtt": [
+       "ApiApiLogsRole90293F72",
+       "Arn"
+      ]
+     },
+     "FieldLogLevel": "ALL"
+    },
+    "Name": "apartment-complex-management",
+    "XrayEnabled": true
+   },
+   "Metadata": {
+    "aws:cdk:path": "AcmsStack/PipelineDevStage/AcmsSharedStack/Api/Resource"
+   }
+  },
+  "ApiSchema510EECD7": {
+   "Type": "AWS::AppSync::GraphQLSchema",
+   "Properties": {
+    "ApiId": {
+     "Fn::GetAtt": [
+      "ApiF70053CD",
+      "ApiId"
+     ]
+    },
+    "Definition": "schema {\n  query: Query\n  mutation: Mutation\n}\n\ntype Mutation {\n  createUserAccount(input: UserInput!): User! @aws_cognito_user_pools\n  updateUserAccount(input: UpdateUserInput!): User! @aws_cognito_user_pools\n  deleteUserAccount(id: ID!): Boolean! @aws_cognito_user_pools\n  leaveFeedback(input: RatingsAndFeedbackInput!): RatingsAndFeedback!\n    @aws_cognito_user_pools\n\n  createBuilding(input: BuildingInput!): Building!\n    @aws_cognito_user_pools(cognito_groups: [\"Admins\"])\n\n  createApartment(input: ApartmentInput): Apartment!\n    @aws_cognito_user_pools(cognito_groups: [\"Admins\"])\n\n  createApartmentBooking(input: CreateBookingInput!): Boolean!\n    @aws_cognito_user_pools(cognito_groups: [\"Tenants\"])\n}\n\ntype Query {\n  getUserAccount(id: ID!): User! @aws_cognito_user_pools\n\n  getAllUserAccounts(pagination: Pagination): UsersResult!\n    @aws_cognito_user_pools(cognito_groups: [\"Admins\", \"Caretakers\"])\n\n  getAllBookingsPerApartment(apartmentId: String!): [Booking!]!\n    @aws_cognito_user_pools\n  getApartmentFeedback(apartmentId: String!): [RatingsAndFeedback!]!\n    @aws_cognito_user_pools\n  getSingleApartment(buildingId: String!, apartmentId: String!): [Apartment!]!\n    @aws_cognito_user_pools\n  getAllApartmentsPerBuilding(buildingId: String!): ApartmentsResult!\n    @aws_cognito_user_pools\n}\n\ninput CreateBookingInput {\n  userId: String!\n  apartmentId: String!\n  startDate: AWSDate!\n  endDate: AWSDate!\n  bookingStatus: BookingStatus!\n}\n\ninput BuildingInput {\n  name: String!\n  userId: String!\n  imageUrls: [String!]!\n  numberOfApartments: Int!\n  address: AddressInput!\n}\n\ntype Address @aws_cognito_user_pools {\n  streetAddress: String!\n  postalCode: String!\n  city: String!\n  country: String!\n  geoLocation: GeoLocation!\n}\ninput GeoLocationInput @aws_cognito_user_pools {\n  longitude: Float!\n  latitude: Float!\n}\ntype GeoLocation @aws_cognito_user_pools {\n  longitude: Float!\n  latitude: Float!\n}\ninput AddressInput {\n  streetAddress: String!\n  postalCode: String!\n  city: String!\n  country: String!\n  geoLocation: GeoLocationInput!\n}\ntype User @aws_cognito_user_pools {\n  id: ID!\n  firstName: String!\n  lastName: String!\n  email: String!\n  verified: Boolean!\n  userType: UserType!\n  updatedOn: AWSDateTime\n  createdOn: AWSDateTime!\n}\ntype Booking @aws_cognito_user_pools {\n  id: ID!\n  userId: String!\n  user: User!\n  startDate: AWSDate!\n  endDate: AWSDate!\n  apartmentId: String!\n  bookingStatus: BookingStatus!\n  updateOn: AWSDateTime!\n  createdOn: AWSDateTime!\n}\n\nenum BookingStatus {\n  PENDING\n  APPROVED\n  CANCELLED\n}\n\ninput UserInput {\n  firstName: String!\n  lastName: String!\n  email: String!\n  verified: Boolean!\n  userType: UserType!\n}\n\ninput UpdateUserInput {\n  firstName: String!\n  lastName: String!\n  verified: Boolean!\n  userType: UserType!\n}\n\ntype RatingsAndFeedback @aws_cognito_user_pools {\n  id: String!\n  ratings: Int!\n  userId: String!\n  user: User!\n  apartment: Apartment!\n  apartmentId: String!\n  feedback: String!\n  createdOn: AWSTimestamp!\n}\n\ninput RatingsAndFeedbackInput @aws_cognito_user_pools {\n  ratings: Int!\n  userId: String!\n  apartmentId: String!\n  feedback: String!\n}\n\ntype Building @aws_cognito_user_pools {\n  id: ID!\n  userId: String!\n  name: String!\n  address: Address!\n  imageUrls: [String!]!\n  numberOfApartments: Int!\n  apartments: [Apartment!]\n  updateOn: AWSDateTime!\n  createdOn: AWSDateTime!\n}\n\ntype Apartment @aws_cognito_user_pools {\n  id: ID!\n  apartmentNumber: String!\n  building: Building!\n  tenant: User!\n  caretaker: User!\n  imageUrls: [String!]!\n  apartmentType: ApartmentType!\n  apartmentStatus: ApartmentStatus!\n  numberOfBedrooms: Int!\n  numberOfLivingRooms: Int!\n  numberOfBathrooms: Int!\n  numberOfKitchens: Int!\n  kitchen: Boolean!\n  numberOfRooms: Int!\n  createdOn: AWSDateTime!\n}\n\ninput ApartmentInput @aws_cognito_user_pools {\n  apartmentNumber: String!\n  buildingId: String!\n  imageUrls: [String!]!\n  numberOfBedrooms: Int!\n  numberOfLivingRooms: Int!\n  numberOfBathrooms: Int!\n  numberOfKitchens: Int!\n  apartmentDetails: AWSJSON!\n  apartmentType: ApartmentType!\n  apartmentStatus: ApartmentStatus!\n}\ntype UsersResult @aws_cognito_user_pools {\n  items: [User!]!\n  nextToken: String\n}\n\ntype ApartmentsResult @aws_cognito_user_pools {\n  items: [Apartment!]!\n  nextToken: String\n}\n\ninput Pagination {\n  limit: Int\n  nextToken: String\n}\n\nenum ApartmentType {\n  SINGLE_ROOM\n  STUDIO\n  ONE_BEDROOM\n  VILLA\n  DUPLEX\n  PENTHOUSE\n}\nenum ApartmentStatus {\n  VACANT\n  OCCUPIED\n}\nenum UserType {\n  ADMIN\n  TENANT\n  CARETAKER\n}\n"
+   },
+   "Metadata": {
+    "aws:cdk:path": "AcmsStack/PipelineDevStage/AcmsSharedStack/Api/Schema"
+   }
+  },
+  "ApiDefaultApiKeyF991C37B": {
+   "Type": "AWS::AppSync::ApiKey",
+   "Properties": {
+    "ApiId": {
+     "Fn::GetAtt": [
+      "ApiF70053CD",
+      "ApiId"
+     ]
+    }
+   },
+   "DependsOn": [
+    "ApiSchema510EECD7"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "AcmsStack/PipelineDevStage/AcmsSharedStack/Api/DefaultApiKey"
+   }
+  },
+  "ApiacmsdbsServiceRole46A8E60C": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "appsync.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "AcmsStack/PipelineDevStage/AcmsSharedStack/Api/acmsdbs/ServiceRole/Resource"
+   }
+  },
+  "ApiacmsdbsServiceRoleDefaultPolicy6A69C1BE": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable",
+        "dynamodb:GetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:PutItem",
+        "dynamodb:Query",
+        "dynamodb:Scan",
+        "dynamodb:UpdateItem"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "ACMSDynamoDbTable4CB9A8F1",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "ACMSDynamoDbTable4CB9A8F1",
+             "Arn"
+            ]
+           },
+           "/index/*"
+          ]
+         ]
+        }
+       ]
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "ApiacmsdbsServiceRoleDefaultPolicy6A69C1BE",
+    "Roles": [
+     {
+      "Ref": "ApiacmsdbsServiceRole46A8E60C"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "AcmsStack/PipelineDevStage/AcmsSharedStack/Api/acmsdbs/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "ApiacmsdbsBDC28288": {
+   "Type": "AWS::AppSync::DataSource",
+   "Properties": {
+    "ApiId": {
+     "Fn::GetAtt": [
+      "ApiF70053CD",
+      "ApiId"
+     ]
+    },
+    "DynamoDBConfig": {
+     "AwsRegion": {
+      "Ref": "AWS::Region"
+     },
+     "TableName": {
+      "Ref": "ACMSDynamoDbTable4CB9A8F1"
+     }
+    },
+    "Name": "acmsdbs",
+    "ServiceRoleArn": {
+     "Fn::GetAtt": [
+      "ApiacmsdbsServiceRole46A8E60C",
+      "Arn"
+     ]
+    },
+    "Type": "AMAZON_DYNAMODB"
+   },
+   "Metadata": {
+    "aws:cdk:path": "AcmsStack/PipelineDevStage/AcmsSharedStack/Api/acmsdbs/Resource"
+   }
+  },
+  "ApiacmsBuildingDataSourceServiceRoleF7FE8446": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "appsync.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "AcmsStack/PipelineDevStage/AcmsSharedStack/Api/acmsBuildingDataSource/ServiceRole/Resource"
+   }
+  },
+  "ApiacmsBuildingDataSourceServiceRoleDefaultPolicyEC80BB43": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable",
+        "dynamodb:GetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:PutItem",
+        "dynamodb:Query",
+        "dynamodb:Scan",
+        "dynamodb:UpdateItem"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "ACMSDynamoDbTable4CB9A8F1",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "ACMSDynamoDbTable4CB9A8F1",
+             "Arn"
+            ]
+           },
+           "/index/*"
+          ]
+         ]
+        }
+       ]
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "ApiacmsBuildingDataSourceServiceRoleDefaultPolicyEC80BB43",
+    "Roles": [
+     {
+      "Ref": "ApiacmsBuildingDataSourceServiceRoleF7FE8446"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "AcmsStack/PipelineDevStage/AcmsSharedStack/Api/acmsBuildingDataSource/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "ApiacmsBuildingDataSource017D27B4": {
+   "Type": "AWS::AppSync::DataSource",
+   "Properties": {
+    "ApiId": {
+     "Fn::GetAtt": [
+      "ApiF70053CD",
+      "ApiId"
+     ]
+    },
+    "DynamoDBConfig": {
+     "AwsRegion": {
+      "Ref": "AWS::Region"
+     },
+     "TableName": {
+      "Ref": "ACMSDynamoDbTable4CB9A8F1"
+     }
+    },
+    "Name": "acmsBuildingDataSource",
+    "ServiceRoleArn": {
+     "Fn::GetAtt": [
+      "ApiacmsBuildingDataSourceServiceRoleF7FE8446",
+      "Arn"
+     ]
+    },
+    "Type": "AMAZON_DYNAMODB"
+   },
+   "Metadata": {
+    "aws:cdk:path": "AcmsStack/PipelineDevStage/AcmsSharedStack/Api/acmsBuildingDataSource/Resource"
+   }
+  },
+  "ApicreateApartmentServiceRole1DF793B2": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "appsync.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "AcmsStack/PipelineDevStage/AcmsSharedStack/Api/createApartment/ServiceRole/Resource"
+   }
+  },
+  "ApicreateApartmentServiceRoleDefaultPolicyD4216741": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable",
+        "dynamodb:GetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:PutItem",
+        "dynamodb:Query",
+        "dynamodb:Scan",
+        "dynamodb:UpdateItem"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "ACMSDynamoDbTable4CB9A8F1",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "ACMSDynamoDbTable4CB9A8F1",
+             "Arn"
+            ]
+           },
+           "/index/*"
+          ]
+         ]
+        }
+       ]
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "ApicreateApartmentServiceRoleDefaultPolicyD4216741",
+    "Roles": [
+     {
+      "Ref": "ApicreateApartmentServiceRole1DF793B2"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "AcmsStack/PipelineDevStage/AcmsSharedStack/Api/createApartment/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "ApicreateApartment8741C640": {
+   "Type": "AWS::AppSync::DataSource",
+   "Properties": {
+    "ApiId": {
+     "Fn::GetAtt": [
+      "ApiF70053CD",
+      "ApiId"
+     ]
+    },
+    "DynamoDBConfig": {
+     "AwsRegion": {
+      "Ref": "AWS::Region"
+     },
+     "TableName": {
+      "Ref": "ACMSDynamoDbTable4CB9A8F1"
+     }
+    },
+    "Name": "createApartment",
+    "ServiceRoleArn": {
+     "Fn::GetAtt": [
+      "ApicreateApartmentServiceRole1DF793B2",
+      "Arn"
+     ]
+    },
+    "Type": "AMAZON_DYNAMODB"
+   },
+   "Metadata": {
+    "aws:cdk:path": "AcmsStack/PipelineDevStage/AcmsSharedStack/Api/createApartment/Resource"
+   }
+  },
+  "ApigetAllApartmentsPerBuildingServiceRole00A742B0": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "appsync.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "AcmsStack/PipelineDevStage/AcmsSharedStack/Api/getAllApartmentsPerBuilding/ServiceRole/Resource"
+   }
+  },
+  "ApigetAllApartmentsPerBuildingServiceRoleDefaultPolicy00FC94A8": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable",
+        "dynamodb:GetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:PutItem",
+        "dynamodb:Query",
+        "dynamodb:Scan",
+        "dynamodb:UpdateItem"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "ACMSDynamoDbTable4CB9A8F1",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "ACMSDynamoDbTable4CB9A8F1",
+             "Arn"
+            ]
+           },
+           "/index/*"
+          ]
+         ]
+        }
+       ]
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "ApigetAllApartmentsPerBuildingServiceRoleDefaultPolicy00FC94A8",
+    "Roles": [
+     {
+      "Ref": "ApigetAllApartmentsPerBuildingServiceRole00A742B0"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "AcmsStack/PipelineDevStage/AcmsSharedStack/Api/getAllApartmentsPerBuilding/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "ApigetAllApartmentsPerBuilding95D3B1D5": {
+   "Type": "AWS::AppSync::DataSource",
+   "Properties": {
+    "ApiId": {
+     "Fn::GetAtt": [
+      "ApiF70053CD",
+      "ApiId"
+     ]
+    },
+    "DynamoDBConfig": {
+     "AwsRegion": {
+      "Ref": "AWS::Region"
+     },
+     "TableName": {
+      "Ref": "ACMSDynamoDbTable4CB9A8F1"
+     }
+    },
+    "Name": "getAllApartmentsPerBuilding",
+    "ServiceRoleArn": {
+     "Fn::GetAtt": [
+      "ApigetAllApartmentsPerBuildingServiceRole00A742B0",
+      "Arn"
+     ]
+    },
+    "Type": "AMAZON_DYNAMODB"
+   },
+   "Metadata": {
+    "aws:cdk:path": "AcmsStack/PipelineDevStage/AcmsSharedStack/Api/getAllApartmentsPerBuilding/Resource"
+   }
+  },
+  "ApiacmsFeedbackDataSourceServiceRole83904D28": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "appsync.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "AcmsStack/PipelineDevStage/AcmsSharedStack/Api/acmsFeedbackDataSource/ServiceRole/Resource"
+   }
+  },
+  "ApiacmsFeedbackDataSourceServiceRoleDefaultPolicyF4472219": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable",
+        "dynamodb:GetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:PutItem",
+        "dynamodb:Query",
+        "dynamodb:Scan",
+        "dynamodb:UpdateItem"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "ACMSDynamoDbTable4CB9A8F1",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "ACMSDynamoDbTable4CB9A8F1",
+             "Arn"
+            ]
+           },
+           "/index/*"
+          ]
+         ]
+        }
+       ]
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "ApiacmsFeedbackDataSourceServiceRoleDefaultPolicyF4472219",
+    "Roles": [
+     {
+      "Ref": "ApiacmsFeedbackDataSourceServiceRole83904D28"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "AcmsStack/PipelineDevStage/AcmsSharedStack/Api/acmsFeedbackDataSource/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "ApiacmsFeedbackDataSource4DAE2131": {
+   "Type": "AWS::AppSync::DataSource",
+   "Properties": {
+    "ApiId": {
+     "Fn::GetAtt": [
+      "ApiF70053CD",
+      "ApiId"
+     ]
+    },
+    "DynamoDBConfig": {
+     "AwsRegion": {
+      "Ref": "AWS::Region"
+     },
+     "TableName": {
+      "Ref": "ACMSDynamoDbTable4CB9A8F1"
+     }
+    },
+    "Name": "acmsFeedbackDataSource",
+    "ServiceRoleArn": {
+     "Fn::GetAtt": [
+      "ApiacmsFeedbackDataSourceServiceRole83904D28",
+      "Arn"
+     ]
+    },
+    "Type": "AMAZON_DYNAMODB"
+   },
+   "Metadata": {
+    "aws:cdk:path": "AcmsStack/PipelineDevStage/AcmsSharedStack/Api/acmsFeedbackDataSource/Resource"
+   }
+  },
+  "ApiFeedbackDataSourceServiceRole649C2B3C": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "appsync.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "AcmsStack/PipelineDevStage/AcmsSharedStack/Api/FeedbackDataSource/ServiceRole/Resource"
+   }
+  },
+  "ApiFeedbackDataSourceServiceRoleDefaultPolicy89D260AB": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable",
+        "dynamodb:GetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:PutItem",
+        "dynamodb:Query",
+        "dynamodb:Scan",
+        "dynamodb:UpdateItem"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "ACMSDynamoDbTable4CB9A8F1",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "ACMSDynamoDbTable4CB9A8F1",
+             "Arn"
+            ]
+           },
+           "/index/*"
+          ]
+         ]
+        }
+       ]
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "ApiFeedbackDataSourceServiceRoleDefaultPolicy89D260AB",
+    "Roles": [
+     {
+      "Ref": "ApiFeedbackDataSourceServiceRole649C2B3C"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "AcmsStack/PipelineDevStage/AcmsSharedStack/Api/FeedbackDataSource/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "ApiFeedbackDataSource633CDE73": {
+   "Type": "AWS::AppSync::DataSource",
+   "Properties": {
+    "ApiId": {
+     "Fn::GetAtt": [
+      "ApiF70053CD",
+      "ApiId"
+     ]
+    },
+    "DynamoDBConfig": {
+     "AwsRegion": {
+      "Ref": "AWS::Region"
+     },
+     "TableName": {
+      "Ref": "ACMSDynamoDbTable4CB9A8F1"
+     }
+    },
+    "Name": "FeedbackDataSource",
+    "ServiceRoleArn": {
+     "Fn::GetAtt": [
+      "ApiFeedbackDataSourceServiceRole649C2B3C",
+      "Arn"
+     ]
+    },
+    "Type": "AMAZON_DYNAMODB"
+   },
+   "Metadata": {
+    "aws:cdk:path": "AcmsStack/PipelineDevStage/AcmsSharedStack/Api/FeedbackDataSource/Resource"
+   }
+  },
+  "ACMSGraphqlApiSchema": {
+   "Type": "AWS::AppSync::GraphQLSchema",
+   "Properties": {
+    "ApiId": {
+     "Fn::GetAtt": [
+      "ApiF70053CD",
+      "ApiId"
+     ]
+    },
+    "Definition": "schema {\n  query: Query\n  mutation: Mutation\n}\n\ntype Mutation {\n  createUserAccount(input: UserInput!): User! @aws_cognito_user_pools\n  updateUserAccount(input: UpdateUserInput!): User! @aws_cognito_user_pools\n  deleteUserAccount(id: ID!): Boolean! @aws_cognito_user_pools\n  leaveFeedback(input: RatingsAndFeedbackInput!): RatingsAndFeedback!\n    @aws_cognito_user_pools\n\n  createBuilding(input: BuildingInput!): Building!\n    @aws_cognito_user_pools(cognito_groups: [\"Admins\"])\n\n  createApartment(input: ApartmentInput): Apartment!\n    @aws_cognito_user_pools(cognito_groups: [\"Admins\"])\n\n  createApartmentBooking(input: CreateBookingInput!): Boolean!\n    @aws_cognito_user_pools(cognito_groups: [\"Tenants\"])\n}\n\ntype Query {\n  getUserAccount(id: ID!): User! @aws_cognito_user_pools\n\n  getAllUserAccounts(pagination: Pagination): UsersResult!\n    @aws_cognito_user_pools(cognito_groups: [\"Admins\", \"Caretakers\"])\n\n  getAllBookingsPerApartment(apartmentId: String!): [Booking!]!\n    @aws_cognito_user_pools\n  getApartmentFeedback(apartmentId: String!): [RatingsAndFeedback!]!\n    @aws_cognito_user_pools\n  getSingleApartment(buildingId: String!, apartmentId: String!): [Apartment!]!\n    @aws_cognito_user_pools\n  getAllApartmentsPerBuilding(buildingId: String!): ApartmentsResult!\n    @aws_cognito_user_pools\n}\n\ninput CreateBookingInput {\n  userId: String!\n  apartmentId: String!\n  startDate: AWSDate!\n  endDate: AWSDate!\n  bookingStatus: BookingStatus!\n}\n\ninput BuildingInput {\n  name: String!\n  userId: String!\n  imageUrls: [String!]!\n  numberOfApartments: Int!\n  address: AddressInput!\n}\n\ntype Address @aws_cognito_user_pools {\n  streetAddress: String!\n  postalCode: String!\n  city: String!\n  country: String!\n  geoLocation: GeoLocation!\n}\ninput GeoLocationInput @aws_cognito_user_pools {\n  longitude: Float!\n  latitude: Float!\n}\ntype GeoLocation @aws_cognito_user_pools {\n  longitude: Float!\n  latitude: Float!\n}\ninput AddressInput {\n  streetAddress: String!\n  postalCode: String!\n  city: String!\n  country: String!\n  geoLocation: GeoLocationInput!\n}\ntype User @aws_cognito_user_pools {\n  id: ID!\n  firstName: String!\n  lastName: String!\n  email: String!\n  verified: Boolean!\n  userType: UserType!\n  updatedOn: AWSDateTime\n  createdOn: AWSDateTime!\n}\ntype Booking @aws_cognito_user_pools {\n  id: ID!\n  userId: String!\n  user: User!\n  startDate: AWSDate!\n  endDate: AWSDate!\n  apartmentId: String!\n  bookingStatus: BookingStatus!\n  updateOn: AWSDateTime!\n  createdOn: AWSDateTime!\n}\n\nenum BookingStatus {\n  PENDING\n  APPROVED\n  CANCELLED\n}\n\ninput UserInput {\n  firstName: String!\n  lastName: String!\n  email: String!\n  verified: Boolean!\n  userType: UserType!\n}\n\ninput UpdateUserInput {\n  firstName: String!\n  lastName: String!\n  verified: Boolean!\n  userType: UserType!\n}\n\ntype RatingsAndFeedback @aws_cognito_user_pools {\n  id: String!\n  ratings: Int!\n  userId: String!\n  user: User!\n  apartment: Apartment!\n  apartmentId: String!\n  feedback: String!\n  createdOn: AWSTimestamp!\n}\n\ninput RatingsAndFeedbackInput @aws_cognito_user_pools {\n  ratings: Int!\n  userId: String!\n  apartmentId: String!\n  feedback: String!\n}\n\ntype Building @aws_cognito_user_pools {\n  id: ID!\n  userId: String!\n  name: String!\n  address: Address!\n  imageUrls: [String!]!\n  numberOfApartments: Int!\n  apartments: [Apartment!]\n  updateOn: AWSDateTime!\n  createdOn: AWSDateTime!\n}\n\ntype Apartment @aws_cognito_user_pools {\n  id: ID!\n  apartmentNumber: String!\n  building: Building!\n  tenant: User!\n  caretaker: User!\n  imageUrls: [String!]!\n  apartmentType: ApartmentType!\n  apartmentStatus: ApartmentStatus!\n  numberOfBedrooms: Int!\n  numberOfLivingRooms: Int!\n  numberOfBathrooms: Int!\n  numberOfKitchens: Int!\n  kitchen: Boolean!\n  numberOfRooms: Int!\n  createdOn: AWSDateTime!\n}\n\ninput ApartmentInput @aws_cognito_user_pools {\n  apartmentNumber: String!\n  buildingId: String!\n  imageUrls: [String!]!\n  numberOfBedrooms: Int!\n  numberOfLivingRooms: Int!\n  numberOfBathrooms: Int!\n  numberOfKitchens: Int!\n  apartmentDetails: AWSJSON!\n  apartmentType: ApartmentType!\n  apartmentStatus: ApartmentStatus!\n}\ntype UsersResult @aws_cognito_user_pools {\n  items: [User!]!\n  nextToken: String\n}\n\ntype ApartmentsResult @aws_cognito_user_pools {\n  items: [Apartment!]!\n  nextToken: String\n}\n\ninput Pagination {\n  limit: Int\n  nextToken: String\n}\n\nenum ApartmentType {\n  SINGLE_ROOM\n  STUDIO\n  ONE_BEDROOM\n  VILLA\n  DUPLEX\n  PENTHOUSE\n}\nenum ApartmentStatus {\n  VACANT\n  OCCUPIED\n}\nenum UserType {\n  ADMIN\n  TENANT\n  CARETAKER\n}\n"
+   },
+   "Metadata": {
+    "aws:cdk:path": "AcmsStack/PipelineDevStage/AcmsSharedStack/ACMSGraphqlApiSchema"
+   }
+  },
+  "ACMSDynamoDbTable4CB9A8F1": {
+   "Type": "AWS::DynamoDB::Table",
+   "Properties": {
+    "AttributeDefinitions": [
+     {
+      "AttributeName": "PK",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "SK",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "GSI1PK",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "GSI1SK",
+      "AttributeType": "S"
+     }
+    ],
+    "BillingMode": "PAY_PER_REQUEST",
+    "GlobalSecondaryIndexes": [
+     {
+      "IndexName": "getAllApartmentsPerUser",
+      "KeySchema": [
+       {
+        "AttributeName": "GSI1PK",
+        "KeyType": "HASH"
+       },
+       {
+        "AttributeName": "GSI1SK",
+        "KeyType": "RANGE"
+       }
+      ],
+      "Projection": {
+       "ProjectionType": "ALL"
+      }
+     }
+    ],
+    "KeySchema": [
+     {
+      "AttributeName": "PK",
+      "KeyType": "HASH"
+     },
+     {
+      "AttributeName": "SK",
+      "KeyType": "RANGE"
+     }
+    ],
+    "StreamSpecification": {
+     "StreamViewType": "NEW_IMAGE"
+    },
+    "TableName": "AcmsDynamoDBDatabaseTable"
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "AcmsStack/PipelineDevStage/AcmsSharedStack/ACMSDynamoDbTable/Resource"
+   }
+  },
+  "CDKMetadata": {
+   "Type": "AWS::CDK::Metadata",
+   "Properties": {
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/1WP0U7DMAxFv2XvqaEVPzC1Eg8gbbTjGblJYN7SOGtSpirKv6OmYown33OvLdsVlOUTlBu8+kKqc2Goh9gFlGeBV/8RJX9ZCgzx3etxz2xE/Wlv+lfUhrQN99HqJEE4QGzZ6CXMdc+G5LzgqpJA5/xsJcTnEd3xYraOljjT2+t/6uRRD7gYW0cvehbNbHHgpm8wYMfTKPOmP0pC5Q7VQzxgvx6SRUqi1f42spuCm/IP927NVlEgtklYVhpO/uG7eoSygmpz8kTFONlAg4Z2rT9WT5LKUAEAAA=="
+   },
+   "Metadata": {
+    "aws:cdk:path": "AcmsStack/PipelineDevStage/AcmsSharedStack/CDKMetadata/Default"
+   },
+   "Condition": "CDKMetadataAvailable"
+  }
+ },
+ "Outputs": {
+  "UserPoolId": {
+   "Value": {
+    "Ref": "ACMSCognitoUserPool31F5ADEC"
+   }
+  },
+  "UserPoolClientId": {
+   "Value": {
+    "Ref": "ACMSUserPoolClient8C32E361"
+   }
+  },
+  "GraphQLAPIID": {
+   "Value": {
+    "Fn::GetAtt": [
+     "ApiF70053CD",
+     "ApiId"
+    ]
+   }
+  },
+  "GraphQLAPIURL": {
+   "Value": {
+    "Fn::GetAtt": [
+     "ApiF70053CD",
+     "GraphQLUrl"
+    ]
+   }
+  },
+  "ExportsOutputFnGetAttApiF70053CDApiIdF185726B": {
+   "Value": {
+    "Fn::GetAtt": [
+     "ApiF70053CD",
+     "ApiId"
+    ]
+   },
+   "Export": {
+    "Name": "dev-AcmsSharedStack:ExportsOutputFnGetAttApiF70053CDApiIdF185726B"
+   }
+  },
+  "ExportsOutputRefACMSDynamoDbTable4CB9A8F1B2B26CA7": {
+   "Value": {
+    "Ref": "ACMSDynamoDbTable4CB9A8F1"
+   },
+   "Export": {
+    "Name": "dev-AcmsSharedStack:ExportsOutputRefACMSDynamoDbTable4CB9A8F1B2B26CA7"
+   }
+  }
+ },
+ "Conditions": {
+  "CDKMetadataAvailable": {
+   "Fn::Or": [
+    {
+     "Fn::Or": [
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "af-south-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-east-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-northeast-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-northeast-2"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-south-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-southeast-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-southeast-2"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ca-central-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "cn-north-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "cn-northwest-1"
+       ]
+      }
+     ]
+    },
+    {
+     "Fn::Or": [
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-central-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-north-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-south-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-west-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-west-2"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-west-3"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "il-central-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "me-central-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "me-south-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "sa-east-1"
+       ]
+      }
+     ]
+    },
+    {
+     "Fn::Or": [
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "us-east-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "us-east-2"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "us-west-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "us-west-2"
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ },
+ "Parameters": {
+  "BootstrapVersion": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/cdk-bootstrap/hnb659fds/version",
+   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+  }
+ },
+ "Rules": {
+  "CheckBootstrapVersion": {
+   "Assertions": [
+    {
+     "Assert": {
+      "Fn::Not": [
+       {
+        "Fn::Contains": [
+         [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+         ],
+         {
+          "Ref": "BootstrapVersion"
+         }
+        ]
+       }
+      ]
+     },
+     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+    }
+   ]
+  }
+ }
+}

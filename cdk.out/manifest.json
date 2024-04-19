@@ -1,0 +1,198 @@
+{
+  "version": "35.0.0",
+  "artifacts": {
+    "assembly-AcmsStack-PipelineDevStage": {
+      "type": "cdk:cloud-assembly",
+      "properties": {
+        "directoryName": "assembly-AcmsStack-PipelineDevStage",
+        "displayName": "AcmsStack/PipelineDevStage"
+      }
+    },
+    "AcmsStack.assets": {
+      "type": "cdk:asset-manifest",
+      "properties": {
+        "file": "AcmsStack.assets.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+      }
+    },
+    "AcmsStack": {
+      "type": "aws:cloudformation:stack",
+      "environment": "aws://unknown-account/unknown-region",
+      "properties": {
+        "templateFile": "AcmsStack.template.json",
+        "terminationProtection": false,
+        "validateOnSynth": false,
+        "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-${AWS::Region}",
+        "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-${AWS::Region}",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/b39dbb50ec9ed14d3da52f3f33653a27a6e0ea732d6d66af650b683ba90fdbbc.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
+        "additionalDependencies": [
+          "AcmsStack.assets"
+        ],
+        "lookupRole": {
+          "arn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-lookup-role-${AWS::AccountId}-${AWS::Region}",
+          "requiresBootstrapStackVersion": 8,
+          "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+        }
+      },
+      "dependencies": [
+        "AcmsStack.assets"
+      ],
+      "metadata": {
+        "/AcmsStack/acms-pipeline/Pipeline/ArtifactsBucket/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "acmspipelinePipelineArtifactsBucketE3B12415"
+          }
+        ],
+        "/AcmsStack/acms-pipeline/Pipeline/ArtifactsBucket/Policy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "acmspipelinePipelineArtifactsBucketPolicy27AA722A"
+          }
+        ],
+        "/AcmsStack/acms-pipeline/Pipeline/Role/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "acmspipelinePipelineRoleF5A27A1E"
+          }
+        ],
+        "/AcmsStack/acms-pipeline/Pipeline/Role/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "acmspipelinePipelineRoleDefaultPolicyEF68F608"
+          }
+        ],
+        "/AcmsStack/acms-pipeline/Pipeline/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "acmspipelinePipeline19ED6F33"
+          }
+        ],
+        "/AcmsStack/acms-pipeline/Pipeline/Source/vernyuy_apartment-management-complex/WebhookResource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "acmspipelinePipelineSourcevernyuyapartmentmanagementcomplexWebhookResource1BA1F62B"
+          }
+        ],
+        "/AcmsStack/acms-pipeline/Pipeline/Build/synth/CdkBuildProject/Role/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "acmspipelinePipelineBuildsynthCdkBuildProjectRoleCE2D135D"
+          }
+        ],
+        "/AcmsStack/acms-pipeline/Pipeline/Build/synth/CdkBuildProject/Role/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "acmspipelinePipelineBuildsynthCdkBuildProjectRoleDefaultPolicy5DD1D573"
+          }
+        ],
+        "/AcmsStack/acms-pipeline/Pipeline/Build/synth/CdkBuildProject/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "acmspipelinePipelineBuildsynthCdkBuildProject147840A9"
+          }
+        ],
+        "/AcmsStack/acms-pipeline/Pipeline/dev/Manual_aproval_before_production/CodePipelineActionRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "acmspipelinePipelinedevManualaprovalbeforeproductionCodePipelineActionRole2AB83578"
+          }
+        ],
+        "/AcmsStack/acms-pipeline/CodeBuildActionRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "acmspipelineCodeBuildActionRole23FBA3BA"
+          }
+        ],
+        "/AcmsStack/acms-pipeline/CodeBuildActionRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "acmspipelineCodeBuildActionRoleDefaultPolicyAF70054B"
+          }
+        ],
+        "/AcmsStack/acms-pipeline/UpdatePipeline/SelfMutation/Role/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "acmspipelineUpdatePipelineSelfMutationRoleA4304E12"
+          }
+        ],
+        "/AcmsStack/acms-pipeline/UpdatePipeline/SelfMutation/Role/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "acmspipelineUpdatePipelineSelfMutationRoleDefaultPolicyFC6DF4B6"
+          }
+        ],
+        "/AcmsStack/acms-pipeline/UpdatePipeline/SelfMutation/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "acmspipelineUpdatePipelineSelfMutationF403189A"
+          }
+        ],
+        "/AcmsStack/acms-pipeline/Assets/FileRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "acmspipelineAssetsFileRole1B9B15E1"
+          }
+        ],
+        "/AcmsStack/acms-pipeline/Assets/FileRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "acmspipelineAssetsFileRoleDefaultPolicyBE5E2ABD"
+          }
+        ],
+        "/AcmsStack/acms-pipeline/Assets/FileAsset1/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "acmspipelineAssetsFileAsset1548C13EC"
+          }
+        ],
+        "/AcmsStack/acms-pipeline/Assets/FileAsset2/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "acmspipelineAssetsFileAsset2EB63C485"
+          }
+        ],
+        "/AcmsStack/acms-pipeline/Assets/FileAsset3/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "acmspipelineAssetsFileAsset3ACDA521D"
+          }
+        ],
+        "/AcmsStack/CDKMetadata/Default": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CDKMetadata"
+          }
+        ],
+        "/AcmsStack/CDKMetadata/Condition": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CDKMetadataAvailable"
+          }
+        ],
+        "/AcmsStack/BootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "BootstrapVersion"
+          }
+        ],
+        "/AcmsStack/CheckBootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CheckBootstrapVersion"
+          }
+        ]
+      },
+      "displayName": "AcmsStack"
+    },
+    "Tree": {
+      "type": "cdk:tree",
+      "properties": {
+        "file": "tree.json"
+      }
+    }
+  }
+}

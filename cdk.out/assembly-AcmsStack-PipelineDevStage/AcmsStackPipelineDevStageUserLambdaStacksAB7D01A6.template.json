@@ -1,0 +1,358 @@
+{
+ "Resources": {
+  "createUserAccount0AFF667F": {
+   "Type": "AWS::AppSync::FunctionConfiguration",
+   "Properties": {
+    "ApiId": {
+     "Fn::ImportValue": "dev-AcmsSharedStack:ExportsOutputFnGetAttApiF70053CDApiIdF185726B"
+    },
+    "Code": "// src/resolvers/user/createUserAccount.ts\nimport { util as util2 } from \"@aws-appsync/utils\";\n\n// src/lib/helpers.ts\nimport {\n  util\n} from \"@aws-appsync/utils\";\nfunction createItem(item) {\n  return {\n    ...item,\n    createdAt: util.time.nowISO8601(),\n    updatedAt: util.time.nowISO8601()\n  };\n}\n\n// src/resolvers/user/createUserAccount.ts\nfunction request(ctx) {\n  const item = createItem(ctx.args.input);\n  const id = util2.autoId();\n  return {\n    operation: \"PutItem\",\n    key: util2.dynamodb.toMapValues({\n      PK: \"USER\",\n      SK: `USER#${id}`\n    }),\n    attributeValues: util2.dynamodb.toMapValues({\n      id,\n      ENTITY: \"USER\",\n      ...item\n    })\n  };\n}\nfunction response(ctx) {\n  return ctx.result;\n}\nexport {\n  request,\n  response\n};\n//# sourceMappingURL=data:application/json;base64,ewogICJ2ZXJzaW9uIjogMywKICAic291cmNlcyI6IFsic3JjL3Jlc29sdmVycy91c2VyL2NyZWF0ZVVzZXJBY2NvdW50LnRzIiwgInNyYy9saWIvaGVscGVycy50cyJdLAogICJtYXBwaW5ncyI6ICI7QUFBQSxTQUEwQyxRQUFBQSxhQUFZOzs7QUNBdEQ7QUFBQSxFQUlJO0FBQUEsT0FDSztBQU9BLFNBQVMsV0FBNkIsTUFBd0I7QUFDbkUsU0FBTztBQUFBLElBQ0wsR0FBRztBQUFBLElBQ0gsV0FBVyxLQUFLLEtBQUssV0FBVztBQUFBLElBQ2hDLFdBQVcsS0FBSyxLQUFLLFdBQVc7QUFBQSxFQUNsQztBQUNGOzs7QURkSyxTQUFTLFFBQ2QsS0FDd0I7QUFDeEIsUUFBTSxPQUFPLFdBQVcsSUFBSSxLQUFLLEtBQU07QUFDdkMsUUFBTSxLQUFLQyxNQUFLLE9BQU87QUFFdkIsU0FBTztBQUFBLElBQ0wsV0FBVztBQUFBLElBQ1gsS0FBS0EsTUFBSyxTQUFTLFlBQVk7QUFBQSxNQUM3QixJQUFJO0FBQUEsTUFDSixJQUFJLFFBQVEsRUFBRTtBQUFBLElBQ2hCLENBQUM7QUFBQSxJQUNELGlCQUFpQkEsTUFBSyxTQUFTLFlBQVk7QUFBQSxNQUN6QztBQUFBLE1BQ0EsUUFBUTtBQUFBLE1BQ1IsR0FBRztBQUFBLElBQ0wsQ0FBQztBQUFBLEVBQ0g7QUFDRjtBQUVPLFNBQVMsU0FDZCxLQUNBO0FBQ0EsU0FBTyxJQUFJO0FBQ2I7IiwKICAibmFtZXMiOiBbInV0aWwiLCAidXRpbCJdCn0K\n",
+    "DataSourceName": "acmsdbs",
+    "FunctionVersion": "2018-05-29",
+    "Name": "createUserAccount",
+    "Runtime": {
+     "Name": "APPSYNC_JS",
+     "RuntimeVersion": "1.0.0"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "AcmsStack/PipelineDevStage/UserLambdaStacks/createUserAccount/Resource"
+   }
+  },
+  "getUserAccountE0002423": {
+   "Type": "AWS::AppSync::FunctionConfiguration",
+   "Properties": {
+    "ApiId": {
+     "Fn::ImportValue": "dev-AcmsSharedStack:ExportsOutputFnGetAttApiF70053CDApiIdF185726B"
+    },
+    "Code": "// src/resolvers/user/getUserAccount.ts\nfunction request(ctx) {\n  const id = ctx.args.id;\n  return {\n    operation: \"GetItem\",\n    key: util.dynamodb.toMapValues({\n      PK: \"USER\",\n      SK: `USER#${id}`\n    })\n  };\n}\nfunction response(ctx) {\n  console.log(\"Reslutss>>>>\", ctx.result);\n  return ctx.result;\n}\nexport {\n  request,\n  response\n};\n//# sourceMappingURL=data:application/json;base64,ewogICJ2ZXJzaW9uIjogMywKICAic291cmNlcyI6IFsic3JjL3Jlc29sdmVycy91c2VyL2dldFVzZXJBY2NvdW50LnRzIl0sCiAgIm1hcHBpbmdzIjogIjtBQUdPLFNBQVMsUUFDZCxLQUN3QjtBQUV4QixRQUFNLEtBQUssSUFBSSxLQUFLO0FBRXBCLFNBQU87QUFBQSxJQUNMLFdBQVc7QUFBQSxJQUNYLEtBQUssS0FBSyxTQUFTLFlBQVk7QUFBQSxNQUM3QixJQUFJO0FBQUEsTUFDSixJQUFJLFFBQVEsRUFBRTtBQUFBLElBQ2hCLENBQUM7QUFBQSxFQUNIO0FBQ0Y7QUFFTyxTQUFTLFNBQ2QsS0FDQTtBQUNBLFVBQVEsSUFBSSxnQkFBZ0IsSUFBSSxNQUFNO0FBQ3RDLFNBQU8sSUFBSTtBQUNiOyIsCiAgIm5hbWVzIjogW10KfQo=\n",
+    "DataSourceName": "acmsdbs",
+    "FunctionVersion": "2018-05-29",
+    "Name": "getUserAccount",
+    "Runtime": {
+     "Name": "APPSYNC_JS",
+     "RuntimeVersion": "1.0.0"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "AcmsStack/PipelineDevStage/UserLambdaStacks/getUserAccount/Resource"
+   }
+  },
+  "getUserAccountResolver74DFCCAD": {
+   "Type": "AWS::AppSync::Resolver",
+   "Properties": {
+    "ApiId": {
+     "Fn::ImportValue": "dev-AcmsSharedStack:ExportsOutputFnGetAttApiF70053CDApiIdF185726B"
+    },
+    "CodeS3Location": {
+     "Fn::Sub": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/b77a238ccebfedfb4d94465dca8951ce61c14c705ce290a7ffcf8a37eb544f63.js"
+    },
+    "FieldName": "getUserAccount",
+    "Kind": "PIPELINE",
+    "PipelineConfig": {
+     "Functions": [
+      {
+       "Fn::GetAtt": [
+        "getUserAccountE0002423",
+        "FunctionId"
+       ]
+      }
+     ]
+    },
+    "Runtime": {
+     "Name": "APPSYNC_JS",
+     "RuntimeVersion": "1.0.0"
+    },
+    "TypeName": "Query"
+   },
+   "Metadata": {
+    "aws:cdk:path": "AcmsStack/PipelineDevStage/UserLambdaStacks/getUserAccountResolver/Resource"
+   }
+  },
+  "createUserResolver5CF490FA": {
+   "Type": "AWS::AppSync::Resolver",
+   "Properties": {
+    "ApiId": {
+     "Fn::ImportValue": "dev-AcmsSharedStack:ExportsOutputFnGetAttApiF70053CDApiIdF185726B"
+    },
+    "CodeS3Location": {
+     "Fn::Sub": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/b77a238ccebfedfb4d94465dca8951ce61c14c705ce290a7ffcf8a37eb544f63.js"
+    },
+    "FieldName": "createUserAccount",
+    "Kind": "PIPELINE",
+    "PipelineConfig": {
+     "Functions": [
+      {
+       "Fn::GetAtt": [
+        "createUserAccount0AFF667F",
+        "FunctionId"
+       ]
+      }
+     ]
+    },
+    "Runtime": {
+     "Name": "APPSYNC_JS",
+     "RuntimeVersion": "1.0.0"
+    },
+    "TypeName": "Mutation"
+   },
+   "Metadata": {
+    "aws:cdk:path": "AcmsStack/PipelineDevStage/UserLambdaStacks/createUserResolver/Resource"
+   }
+  },
+  "CDKMetadata": {
+   "Type": "AWS::CDK::Metadata",
+   "Properties": {
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/zWMWwqDMBBF1+J/nNbYDajQBegCJI1RRu1EMolSxL2XKH7dw31JyLIXZInaONXdlM74gb3xSk9Cbdzualn4Rxr24oJ3IO3Rkqh6urmy1OMQnDqD2rCdV+Ni4+ZDcN4qZuMZiiiCcyiDnowvFZtDnGbj1YA03MPgtIlcWeowXh+CbGdg5Mcqn5BJkMnIiKkL5PFroL70D/ygM/nTAAAA"
+   },
+   "Metadata": {
+    "aws:cdk:path": "AcmsStack/PipelineDevStage/UserLambdaStacks/CDKMetadata/Default"
+   },
+   "Condition": "CDKMetadataAvailable"
+  }
+ },
+ "Conditions": {
+  "CDKMetadataAvailable": {
+   "Fn::Or": [
+    {
+     "Fn::Or": [
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "af-south-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-east-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-northeast-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-northeast-2"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-south-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-southeast-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-southeast-2"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ca-central-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "cn-north-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "cn-northwest-1"
+       ]
+      }
+     ]
+    },
+    {
+     "Fn::Or": [
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-central-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-north-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-south-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-west-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-west-2"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-west-3"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "il-central-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "me-central-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "me-south-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "sa-east-1"
+       ]
+      }
+     ]
+    },
+    {
+     "Fn::Or": [
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "us-east-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "us-east-2"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "us-west-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "us-west-2"
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ },
+ "Parameters": {
+  "BootstrapVersion": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/cdk-bootstrap/hnb659fds/version",
+   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+  }
+ },
+ "Rules": {
+  "CheckBootstrapVersion": {
+   "Assertions": [
+    {
+     "Assert": {
+      "Fn::Not": [
+       {
+        "Fn::Contains": [
+         [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+         ],
+         {
+          "Ref": "BootstrapVersion"
+         }
+        ]
+       }
+      ]
+     },
+     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+    }
+   ]
+  }
+ }
+}
