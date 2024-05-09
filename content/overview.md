@@ -6,10 +6,10 @@ You will learn how to use
 - Amazon Cognito, 
 - Amazon DynamoDB, 
 - Amazon SQS,
-- Javascript resolver,
+- Javascript resolvers,
 - CodePipeline for CICD
 - Graphql codegen to generate TypeScript types from your GraphQL schema. This means you can have type-safe access to your schema's types, queries, mutations, and subscriptions directly in your TypeScript code.
-- and AWS AppSync to create a scalable, secure, and cost-effective system for managing your apartment complex.
+- and AWS AppSync to create a scalable, secure, cost-effective system for managing your apartment complex.
 
 
 ## Course Objectives
@@ -23,10 +23,10 @@ By the end of this course, you will be able to:
 - Use Amazon Cognito to authenticate and authorize users.
 - Use Amazon DynamoDB to store data about your apartment complex.
 - Explore the power of javascript resolvers over lambda resolvers.
-- Use codegen to generate types for the graphql schema.
+- Use codegen to generate types for the Graphql schema.
 
-
+> Get the complete code for each module from its corresponding GitHub branch.
 
 ## Solutions Architecture
 
-![alt text](https://d23o47bsb60hff.cloudfront.net/public/724ec14b-3495-48f9-bb74-006c0267dff4)
+![alt text](https://d23o47bsb60hff.cloudfront.net/public/a12a651f-68fd-4aab-9c75-0770fc35ce92)
