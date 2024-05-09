@@ -3,8 +3,6 @@ import { Construct } from "constructs";
 import * as cognito from "aws-cdk-lib/aws-cognito";
 import { UserPool, UserPoolClient } from "aws-cdk-lib/aws-cognito";
 import * as appsync from "aws-cdk-lib/aws-appsync";
-
-import * as iam from "aws-cdk-lib/aws-iam";
 import {
   AttributeType,
   BillingMode,
@@ -12,7 +10,6 @@ import {
   StreamViewType,
   Table,
 } from "aws-cdk-lib/aws-dynamodb";
-import { ManagedPolicy, Role, ServicePrincipal } from "aws-cdk-lib/aws-iam";
 import { readFileSync } from "fs";
 
 export class AcmsSharedStack extends Stack {
@@ -46,13 +43,6 @@ export class AcmsSharedStack extends Stack {
         },
       }
     );
-    // const dynamoDBRole = new Role(this, "DynamoDBRole", {
-    //   assumedBy: new ServicePrincipal("appsync.amazonaws.com"),
-    // });
-
-    // dynamoDBRole.addManagedPolicy(
-    //   ManagedPolicy.fromAwsManagedPolicyName("AmazonDynamoDBFullAccess")
-    // );
 
     const userPoolClient: UserPoolClient = new cognito.UserPoolClient(
       this,
@@ -60,21 +50,6 @@ export class AcmsSharedStack extends Stack {
       {
         userPool,
       }
-    );
-
-    /**
-     * CloudWatch Role
-     */
-    // give appsync permission to log to cloudwatch by assigning a role
-
-    const cloudWatchRole = new iam.Role(this, "appSyncCloudWatchLogs", {
-      assumedBy: new iam.ServicePrincipal("appsync.amazonaws.com"),
-    });
-
-    cloudWatchRole.addManagedPolicy(
-      iam.ManagedPolicy.fromAwsManagedPolicyName(
-        "service-role/AWSAppSyncPushToCloudWatchLogs"
-      )
     );
 
     /**

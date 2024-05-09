@@ -16,19 +16,20 @@ import { aws_iam } from "aws-cdk-lib";
 import * as ddb from "aws-cdk-lib/aws-dynamodb";
 import { Construct } from "constructs";
 import * as appsync from "aws-cdk-lib/aws-appsync";
+import { Table } from "aws-cdk-lib/aws-dynamodb";
 import { bundleAppSyncResolver } from "./helpers";
 import { join } from "path";
 import * as sqs from  "aws-cdk-lib/aws-sqs";
 
-interface BookingLambdaStackProps extends StackProps {
+interface BookingStackProps extends StackProps {
   acmsGraphqlApi: appsync.GraphqlApi;
   // apiSchema: appsync.CfnGraphQLSchema;
-  acmsDatabase: ddb.Table;
+  acmsDatabase: Table;
   // acmsTableDatasource: CfnDataSource;
 }
 
-export class BookingLamdaStacks extends Stack {
-  constructor(scope: Construct, id: string, props: BookingLambdaStackProps) {
+export class BookingStacks extends Stack {
+  constructor(scope: Construct, id: string, props: BookingStackProps) {
     super(scope, id, props);
 
     const { acmsDatabase, acmsGraphqlApi } =
@@ -64,10 +65,8 @@ const lambdaRole = new Role(this, "bookingLambdaRole", {
           entry: path.join(__dirname, "lambda-fns/booking", "app.ts"),
           memorySize: 1024,
           environment:{
-
             BOOKING_QUEUE_URL: queue.queueUrl,
-
-            ACMS_DB: acmsDatabase.tableName,
+            // ACMS_DB: acmsDatabase.tableName,
           }
         }
       );
@@ -108,8 +107,8 @@ const lambdaRole = new Role(this, "bookingLambdaRole", {
       // lambdaResolver.node.addDependency(acmsGraphqlApi);
       // lambdaResolver.node.addDependency(apiSchema);
       // processSQSLambda.node.addDependency(acmsDatabase)
-    // acmsDatabase.grantWriteData(processSQSLambda);
-    // acmsDatabase.grantReadData(bookingLambda);
+    acmsDatabase.grantWriteData(processSQSLambda);
+    acmsDatabase.grantReadData(bookingLambda);
     queue.grantSendMessages(bookingLambda);
     queue.grantConsumeMessages(processSQSLambda);
     // bookingLambda.addEnvironment("ACMS_DB", acmsDatabase.tableName);

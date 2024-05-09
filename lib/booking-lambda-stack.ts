@@ -1,24 +1,24 @@
-import { CfnOutput, Stack, StackProps } from "aws-cdk-lib";
-import {
-  CfnDataSource,
-  CfnFunctionConfiguration,
-  CfnGraphQLApi,
-  CfnGraphQLSchema,
-  CfnResolver,
-} from "aws-cdk-lib/aws-appsync";
-import * as signer from "aws-cdk-lib/aws-signer";
-import { ManagedPolicy, Role, ServicePrincipal } from "aws-cdk-lib/aws-iam";
-import * as lambda from "aws-cdk-lib/aws-lambda";
-import * as path from "path";
-import { NodejsFunction } from "aws-cdk-lib/aws-lambda-nodejs";
-import { Tracing } from "aws-cdk-lib/aws-lambda";
-import { aws_iam } from "aws-cdk-lib";
-import { Table } from "aws-cdk-lib/aws-dynamodb";
-import { Construct } from "constructs";
-import * as appsync from "aws-cdk-lib/aws-appsync";
-import { bundleAppSyncResolver } from "./helpers";
-import { join } from "path";
-import * as sqs from  "aws-cdk-lib/aws-sqs";
+// import { CfnOutput, Stack, StackProps } from "aws-cdk-lib";
+// import {
+//   CfnDataSource,
+//   CfnFunctionConfiguration,
+//   CfnGraphQLApi,
+//   CfnGraphQLSchema,
+//   CfnResolver,
+// } from "aws-cdk-lib/aws-appsync";
+// import * as signer from "aws-cdk-lib/aws-signer";
+// import { ManagedPolicy, Role, ServicePrincipal } from "aws-cdk-lib/aws-iam";
+// import * as lambda from "aws-cdk-lib/aws-lambda";
+// import * as path from "path";
+// import { NodejsFunction } from "aws-cdk-lib/aws-lambda-nodejs";
+// import { Tracing } from "aws-cdk-lib/aws-lambda";
+// import { aws_iam } from "aws-cdk-lib";
+// import { Table } from "aws-cdk-lib/aws-dynamodb";
+// import { Construct } from "constructs";
+// import * as appsync from "aws-cdk-lib/aws-appsync";
+// import { bundleAppSyncResolver } from "./helpers";
+// import { join } from "path";
+// import * as sqs from  "aws-cdk-lib/aws-sqs";
 
 // interface BookingLambdaStackProps extends StackProps {
 //   acmsGraphqlApi: appsync.GraphqlApi;
@@ -45,54 +45,54 @@ import * as sqs from  "aws-cdk-lib/aws-sqs";
 //       },
 //     });
 
-//     // const policyStatement = new aws_iam.PolicyStatement({
-//     //   effect: aws_iam.Effect.ALLOW,
-//     //   actions: ["cloudwatch:PutMetricData"],
-//     //   resources: ["*"],
-//     // });
+//     const policyStatement = new aws_iam.PolicyStatement({
+//       effect: aws_iam.Effect.ALLOW,
+//       actions: ["cloudwatch:PutMetricData"],
+//       resources: ["*"],
+//     });
 
-//     // const signingProfile = new signer.SigningProfile(this, "SigningProfile", {
-//     //   platform: signer.Platform.AWS_LAMBDA_SHA384_ECDSA,
-//     // });
+//     const signingProfile = new signer.SigningProfile(this, "SigningProfile", {
+//       platform: signer.Platform.AWS_LAMBDA_SHA384_ECDSA,
+//     });
 
-//     // const codeSigningConfig = new lambda.CodeSigningConfig(
-//     //   this,
-//     //   "CodeSigningConfig",
-//     //   {
-//     //     signingProfiles: [signingProfile],
-//     //   }
-//     // );
-
-//     /**
-//      *
-//      * IAM role for Queue Lambda function
-//      */
-//     // const lambdaQueueRole = new Role(this, "QueueConsumerFunctionRole", {
-//     //   assumedBy: new ServicePrincipal("lambda.amazonaws.com"),
-//     //   managedPolicies: [
-//     //     ManagedPolicy.fromAwsManagedPolicyName(
-//     //       "service-role/AWSLambdaSQSQueueExecutionRole"
-//     //     ),
-//     //     ManagedPolicy.fromAwsManagedPolicyName("AWSLambda_FullAccess"),
-//     //     ManagedPolicy.fromAwsManagedPolicyName(
-//     //       "service-role/AWSAppSyncPushToCloudWatchLogs"
-//     //     ),
-//     //   ],
-//     // });
+//     const codeSigningConfig = new lambda.CodeSigningConfig(
+//       this,
+//       "CodeSigningConfig",
+//       {
+//         signingProfiles: [signingProfile],
+//       }
+//     );
 
 //     /**
 //      *
 //      * IAM role for Queue Lambda function
 //      */
-//     // const lambdaRole = new Role(this, "LmbdaFunctionRole", {
-//     //   assumedBy: new ServicePrincipal("lambda.amazonaws.com"),
-//     //   managedPolicies: [
-//     //     ManagedPolicy.fromAwsManagedPolicyName("AWSLambda_FullAccess"),
-//     //     ManagedPolicy.fromAwsManagedPolicyName(
-//     //       "service-role/AWSAppSyncPushToCloudWatchLogs"
-//     //     ),
-//     //   ],
-//     // });
+//     const lambdaQueueRole = new Role(this, "QueueConsumerFunctionRole", {
+//       assumedBy: new ServicePrincipal("lambda.amazonaws.com"),
+//       managedPolicies: [
+//         ManagedPolicy.fromAwsManagedPolicyName(
+//           "service-role/AWSLambdaSQSQueueExecutionRole"
+//         ),
+//         ManagedPolicy.fromAwsManagedPolicyName("AWSLambda_FullAccess"),
+//         ManagedPolicy.fromAwsManagedPolicyName(
+//           "service-role/AWSAppSyncPushToCloudWatchLogs"
+//         ),
+//       ],
+//     });
+
+//     /**
+//      *
+//      * IAM role for Queue Lambda function
+//      */
+//     const lambdaRole = new Role(this, "LmbdaFunctionRole", {
+//       assumedBy: new ServicePrincipal("lambda.amazonaws.com"),
+//       managedPolicies: [
+//         ManagedPolicy.fromAwsManagedPolicyName("AWSLambda_FullAccess"),
+//         ManagedPolicy.fromAwsManagedPolicyName(
+//           "service-role/AWSAppSyncPushToCloudWatchLogs"
+//         ),
+//       ],
+//     });
 
 //     /**
 //      * booking function
@@ -132,25 +132,25 @@ import * as sqs from  "aws-cdk-lib/aws-sqs";
 //      * lambda to sqs
 //      */
 
-//     // const eventSourceMapping = new lambda.EventSourceMapping(
-//     //   this,
-//     //   "QueueConsumerFunctionBookingEvent",
-//     //   {
-//     //     target: processSQSLambda,
-//     //     batchSize: 10,
-//     //     eventSourceArn: queue.queueArn,
-//     //     reportBatchItemFailures: true,
-//     //   }
-//     // );
-//     // const appsyncLambdaRole = new Role(this, "LambdaRole", {
-//     //   assumedBy: new ServicePrincipal("appsync.amazonaws.com"),
-//     //   managedPolicies: [
-//     //     ManagedPolicy.fromAwsManagedPolicyName(
-//     //       "service-role/AWSLambdaSQSQueueExecutionRole"
-//     //     ),
-//     //     ManagedPolicy.fromAwsManagedPolicyName("AWSLambda_FullAccess"),
-//     //   ],
-//     // });
+//     const eventSourceMapping = new lambda.EventSourceMapping(
+//       this,
+//       "QueueConsumerFunctionBookingEvent",
+//       {
+//         target: processSQSLambda,
+//         batchSize: 10,
+//         eventSourceArn: queue.queueArn,
+//         reportBatchItemFailures: true,
+//       }
+//     );
+//     const appsyncLambdaRole = new Role(this, "LambdaRole", {
+//       assumedBy: new ServicePrincipal("appsync.amazonaws.com"),
+//       managedPolicies: [
+//         ManagedPolicy.fromAwsManagedPolicyName(
+//           "service-role/AWSLambdaSQSQueueExecutionRole"
+//         ),
+//         ManagedPolicy.fromAwsManagedPolicyName("AWSLambda_FullAccess"),
+//       ],
+//     });
 
 //     const lambdaDataSources = acmsGraphqlApi.addLambdaDataSource(
 //       "bookingLambdaDatasource",
