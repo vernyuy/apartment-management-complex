@@ -10,9 +10,7 @@ exports.handler = async (event: any) => {
     //     return null;
     // }
 
-    return {
-        message: "hello"
-    };
+    return true
   };
   
   const items: { [key: string]: { id: string, name: string, description?: string } } = {};
