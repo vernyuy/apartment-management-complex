@@ -36,25 +36,12 @@ export class BookingStacks extends Stack {
       props;
 
        // Create the Lambda function for resolvers
-    const lambdaFn = new lambda.Function(this, 'AppSyncLambdaHandler', {
-      runtime: lambda.Runtime.NODEJS_20_X,
-      handler: 'index.handler',
-      code: lambda.Code.fromAsset(path.join(__dirname, './lambda-fns')),
-    });
+    // const lambdaFn = new lambda.Function(this, 'AppSyncLambdaHandler', {
+    //   runtime: lambda.Runtime.NODEJS_20_X,
+    //   handler: 'index.handler',
+    //   code: lambda.Code.fromAsset(path.join(__dirname, './lambda-fns')),
+    // });
 
-    // Grant AppSync permissions to invoke the Lambda function
-    const lambdaDs = acmsGraphqlApi.addLambdaDataSource('lambdaDatasource', lambdaFn);
-
-    // Create resolvers
-    lambdaDs.createResolver('sdjfsd',{
-      typeName: "Query",
-      fieldName: "getItem",
-    });
-
-    lambdaDs.createResolver("adjfddf",{
-      typeName: "Mutation",
-      fieldName: "createApartmentBooking",
-    });
 
     // Output the API URL
     // new cdk.CfnOutput(this, 'GraphQLAPIURL', {
@@ -69,13 +56,13 @@ export class BookingStacks extends Stack {
     //  * Create SQS Queue and Dead letter Queue
     //  */
 
-    // const dlq = new sqs.Queue(this, "DeadLetterQueue");
-    // const queue = new sqs.Queue(this, "bookingQueue", {
-    //   deadLetterQueue: {
-    //     queue: dlq,
-    //     maxReceiveCount: 10,
-    //   },
-    // });
+    const dlq = new sqs.Queue(this, "DeadLetterQueue");
+    const queue = new sqs.Queue(this, "bookingQueue", {
+      deadLetterQueue: {
+        queue: dlq,
+        maxReceiveCount: 10,
+      },
+    });
 
 // const lambdaRole = new Role(this, "bookingLambdaRole", {
 //       assumedBy: new ServicePrincipal("lambda.amazonaws.com"),
@@ -86,21 +73,35 @@ export class BookingStacks extends Stack {
 //       ],
 //     });
 
-    // const bookingLambda: NodejsFunction = new NodejsFunction(
-    //     this,
-    //     "AcmsBookingHandler",
-    //     {
-    //       tracing: Tracing.ACTIVE,
-    //       runtime: lambda.Runtime.NODEJS_16_X,
-    //       handler: "handler",
-    //       entry: path.join(__dirname, "lambda-fns/booking", "app.ts"),
-    //       memorySize: 1024,
-    //       environment:{
-    //         BOOKING_QUEUE_URL: queue.queueUrl,
-    //         ACMS_DB: acmsDatabase.tableName,
-    //       }
-    //     }
-    //   );
+    const bookingLambda: NodejsFunction = new NodejsFunction(
+        this,
+        "AcmsBookingHandler",
+        {
+          tracing: Tracing.ACTIVE,
+          runtime: lambda.Runtime.NODEJS_16_X,
+          handler: "handler",
+          entry: path.join(__dirname, "lambda-fns/booking", "app.ts"),
+          memorySize: 1024,
+          environment:{
+            BOOKING_QUEUE_URL: queue.queueUrl,
+            // ACMS_DB: acmsDatabase.tableName,
+          }
+        }
+      );
+
+          // Grant AppSync permissions to invoke the Lambda function
+    const lambdaDs = acmsGraphqlApi.addLambdaDataSource('lambdaDatasource', bookingLambda);
+
+    // Create resolvers
+    lambdaDs.createResolver('sdjfsd',{
+      typeName: "Query",
+      fieldName: "getItem",
+    });
+
+    lambdaDs.createResolver("adjfddf",{
+      typeName: "Mutation",
+      fieldName: "createApartmentBooking",
+    });
 
        /**
      * Process SQS Messages Lambda
