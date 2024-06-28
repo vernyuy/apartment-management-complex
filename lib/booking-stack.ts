@@ -66,7 +66,7 @@ export class BookingStacks extends Stack {
           memorySize: 1024,
           environment:{
             BOOKING_QUEUE_URL: queue.queueUrl,
-            // ACMS_DB: acmsDatabase.tableName,
+            ACMS_DB: acmsDatabase.tableName,
           }
         }
       );
@@ -103,15 +103,11 @@ export class BookingStacks extends Stack {
         fieldName: 'createApartmentBooking',
       });
 
-      // lambdaResolver.node.addDependency(acmsDatabase);
-      // lambdaResolver.node.addDependency(acmsGraphqlApi);
-      // lambdaResolver.node.addDependency(apiSchema);
-      // processSQSLambda.node.addDependency(acmsDatabase)
     acmsDatabase.grantWriteData(processSQSLambda);
     acmsDatabase.grantReadData(bookingLambda);
     queue.grantSendMessages(bookingLambda);
     queue.grantConsumeMessages(processSQSLambda);
-    // bookingLambda.addEnvironment("ACMS_DB", acmsDatabase.tableName);
+    bookingLambda.addEnvironment("ACMS_DB", acmsDatabase.tableName);
     bookingLambda.addEnvironment("BOOKING_QUEUE_URL", queue.queueUrl);
   }
 }
