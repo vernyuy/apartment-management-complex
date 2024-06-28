@@ -2,7 +2,6 @@ import { AcmsSharedStack } from "./acms-shared-stack";
 import { UserLamdaStacks } from "./user-lambda-stack";
 import { BuildingLamdaStacks } from "./building-lambda-stack";
 import { ApartmentLamdaStacks } from "./apartment-lambda-stack";
-import { BookingLamdaStacks } from "./booking-lambda-stack";
 import { DdbStreamLamdaStacks } from "./ddb-stream-lambda-stack";
 import { RatingsAndFeedbackStack } from "./ratings-feedback-stack";
 import { Stage, StageProps } from "aws-cdk-lib";
@@ -34,11 +33,11 @@ export class PipelineStage extends Stage {
       acmsGraphqlApi: acmsSharedStack.acmsGraphqlApi,
     });
 
-    const bookingStacks = new BookingLamdaStacks(this, "BookingLambdaStacks", {
-      acmsDatabase: acmsSharedStack.acmsDatabase,
-      acmsGraphqlApi: acmsSharedStack.acmsGraphqlApi,
-      // apiSchema: acmsSharedStack.apiSchema,
-    });
+    // const bookingStacks = new BookingLamdaStacks(this, "BookingLambdaStacks", {
+    //   acmsDatabase: acmsSharedStack.acmsDatabase,
+    //   acmsGraphqlApi: acmsSharedStack.acmsGraphqlApi,
+    //   // apiSchema: acmsSharedStack.apiSchema,
+    // });
 
     // new DdbStreamLamdaStacks(this, "DdbStreamLambdaStacks", {
     //   acmsDatabase: acmsSharedStack.acmsDatabase,

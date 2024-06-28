@@ -46,14 +46,14 @@ export class BookingStacks extends Stack {
       },
     });
 
-const lambdaRole = new Role(this, "bookingLambdaRole", {
-      assumedBy: new ServicePrincipal("lambda.amazonaws.com"),
-      managedPolicies: [
-        ManagedPolicy.fromAwsManagedPolicyName(
-          "service-role/AWSAppSyncPushToCloudWatchLogs"
-        ),
-      ],
-    });
+// const lambdaRole = new Role(this, "bookingLambdaRole", {
+//       assumedBy: new ServicePrincipal("lambda.amazonaws.com"),
+//       managedPolicies: [
+//         ManagedPolicy.fromAwsManagedPolicyName(
+//           "service-role/AWSAppSyncPushToCloudWatchLogs"
+//         ),
+//       ],
+//     });
 
     const bookingLambda: NodejsFunction = new NodejsFunction(
         this,
@@ -98,7 +98,7 @@ const lambdaRole = new Role(this, "bookingLambdaRole", {
     //     fieldName: 'listNotes',
     //   });
   
-      const lambdaResolver = lambdaDataSource.createResolver('mutation-resolver', {
+      lambdaDataSource.createResolver('mutation-resolver', {
         typeName: 'Mutation',
         fieldName: 'createApartmentBooking',
       });

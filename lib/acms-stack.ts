@@ -21,7 +21,7 @@ export class AcmsStack extends Stack {
       synth: new ShellStep("synth", {
         input: CodePipelineSource.gitHub(
           "vernyuy/apartment-management-complex",
-          "main"
+          "completeCode"
         ),
         commands: ["npm ci", "npm run build", "npx cdk synth"],
       }),
