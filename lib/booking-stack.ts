@@ -53,7 +53,7 @@ export class BookingStacks extends Stack {
 
     lambdaDs.createResolver("adjfddf",{
       typeName: "Mutation",
-      fieldName: "createItem",
+      fieldName: "createApartmentBooking",
     });
 
     // Output the API URL
