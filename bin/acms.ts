@@ -10,7 +10,7 @@ import { DdbStreamLamdaStacks } from "../lib/ddb-stream-lambda-stack";
 
 const app = new cdk.App();
 const acmsStack = new AcmsStack(app, "AcmsStack", {
-  env: { account: "132260253285", region: "us-east-2" },
+  env: { account: "132260253285", region: "us-east-1" },
 
   /* For more information, see https://docs.aws.amazon.com/cdk/latest/guide/environments.html */
 });
