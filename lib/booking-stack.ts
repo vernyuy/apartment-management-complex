@@ -20,6 +20,7 @@ import { Table } from "aws-cdk-lib/aws-dynamodb";
 import { bundleAppSyncResolver } from "./helpers";
 import { join } from "path";
 import * as sqs from  "aws-cdk-lib/aws-sqs";
+import { Lambda } from "aws-cdk-lib/aws-ses-actions";
 
 interface BookingStackProps extends StackProps {
   acmsGraphqlApi: appsync.GraphqlApi;
@@ -34,27 +35,9 @@ export class BookingStacks extends Stack {
 
     const { acmsDatabase, acmsGraphqlApi } =
       props;
-
-       // Create the Lambda function for resolvers
-    // const lambdaFn = new lambda.Function(this, 'AppSyncLambdaHandler', {
-    //   runtime: lambda.Runtime.NODEJS_20_X,
-    //   handler: 'index.handler',
-    //   code: lambda.Code.fromAsset(path.join(__dirname, './lambda-fns')),
-    // });
-
-
-    // Output the API URL
-    // new cdk.CfnOutput(this, 'GraphQLAPIURL', {
-    //   value: api.graphqlUrl
-    // });
-
-    // // Output the API Key
-    // new cdk.CfnOutput(this, 'GraphQLAPIKey', {
-    //   value: api.apiKey || ''
-    // });
-    // /**
-    //  * Create SQS Queue and Dead letter Queue
-    //  */
+    /**
+     * Create SQS Queue and Dead letter Queue
+     */
 
     const dlq = new sqs.Queue(this, "DeadLetterQueue");
     const queue = new sqs.Queue(this, "bookingQueue", {
@@ -64,14 +47,14 @@ export class BookingStacks extends Stack {
       },
     });
 
-// const lambdaRole = new Role(this, "bookingLambdaRole", {
-//       assumedBy: new ServicePrincipal("lambda.amazonaws.com"),
-//       managedPolicies: [
-//         ManagedPolicy.fromAwsManagedPolicyName(
-//           "service-role/AWSAppSyncPushToCloudWatchLogs"
-//         ),
-//       ],
-//     });
+const lambdaRole = new Role(this, "bookingLambdaRole", {
+      assumedBy: new ServicePrincipal("lambda.amazonaws.com"),
+      managedPolicies: [
+        ManagedPolicy.fromAwsManagedPolicyName(
+          "service-role/AWSAppSyncPushToCloudWatchLogs"
+        ),
+      ],
+    });
 
     const bookingLambda: NodejsFunction = new NodejsFunction(
         this,
@@ -89,57 +72,52 @@ export class BookingStacks extends Stack {
         }
       );
 
-          // Grant AppSync permissions to invoke the Lambda function
-    const lambdaDs = acmsGraphqlApi.addLambdaDataSource('lambdaDatasource', bookingLambda);
-
-    // Create resolvers
-    lambdaDs.createResolver('sdjfsd',{
-      typeName: "Query",
-      fieldName: "getItem",
-    });
-
-    lambdaDs.createResolver("adjfddf",{
-      typeName: "Mutation",
-      fieldName: "createApartmentBooking",
-    });
-
        /**
      * Process SQS Messages Lambda
      */
-    // const processSQSLambda: NodejsFunction = new NodejsFunction(
-    //     this,
-    //     "ProcessSqSBookingHandler",
-    //     {
-    //       tracing: Tracing.ACTIVE,
-    //       runtime: lambda.Runtime.NODEJS_16_X,
-    //       handler: "handler",
-    //       entry: path.join(
-    //         __dirname,
-    //         "lambda-fns/booking",
-    //         "processSqsBooking.ts"
-    //       ),
-    //       memorySize: 1024,
-    //     }
-    //   );
+    const test = new lambda.Function(this, "func", {
+      runtime: lambda.Runtime.NODEJS_16_X,
+      code: lambda.Code.fromAsset(join(__dirname, "lambda-fns/booking")),
+      handler: "processSqsBooking.handler",
+    })
+    const processSQSLambda: NodejsFunction = new NodejsFunction(
+        this,
+        "ProcessSqSBookingHandler",
+        {
+          tracing: Tracing.ACTIVE,
+          runtime: lambda.Runtime.NODEJS_16_X,
+          handler: "handler",
+          entry: path.join(
+            __dirname,
+            "lambda-fns/booking",
+            "processSqsBooking.ts"
+          ),
+          memorySize: 1024,
+        }
+      );
 
       // Create a data source for the Lambda function
-    // const lambdaDataSource = acmsGraphqlApi.addLambdaDataSource('lambda-data-source', bookingLambda);
+    const lambdaDataSource = acmsGraphqlApi.addLambdaDataSource('lambda-data-source', test);
 
     // lambdaDataSource.createResolver('query-resolver', {
     //     typeName: 'Query',
     //     fieldName: 'listNotes',
     //   });
   
-    //   lambdaDataSource.createResolver('mutation-resolver', {
-    //     typeName: 'Mutation',
-    //     fieldName: 'createApartmentBooking',
-    //   });
+      const lambdaResolver = lambdaDataSource.createResolver('mutation-resolver', {
+        typeName: 'Mutation',
+        fieldName: 'createApartmentBooking',
+      });
 
-    // acmsDatabase.grantWriteData(processSQSLambda);
-    // acmsDatabase.grantReadData(bookingLambda);
-    // queue.grantSendMessages(bookingLambda);
-    // queue.grantConsumeMessages(processSQSLambda);
+      // lambdaResolver.node.addDependency(acmsDatabase);
+      // lambdaResolver.node.addDependency(acmsGraphqlApi);
+      // lambdaResolver.node.addDependency(apiSchema);
+      // processSQSLambda.node.addDependency(acmsDatabase)
+    acmsDatabase.grantWriteData(processSQSLambda);
+    acmsDatabase.grantReadData(bookingLambda);
+    queue.grantSendMessages(bookingLambda);
+    queue.grantConsumeMessages(processSQSLambda);
     // bookingLambda.addEnvironment("ACMS_DB", acmsDatabase.tableName);
-    // bookingLambda.addEnvironment("BOOKING_QUEUE_URL", queue.queueUrl);
+    bookingLambda.addEnvironment("BOOKING_QUEUE_URL", queue.queueUrl);
   }
 }
