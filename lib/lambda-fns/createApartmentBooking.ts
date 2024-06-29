@@ -1,5 +1,5 @@
 import { Logger } from "@aws-lambda-powertools/logger";
-import {  DynamoDB, SQS } from "aws-sdk";
+import { DynamoDB, SQS } from "aws-sdk";
 import { uuid } from "../utils";
 import { MutationCreateApartmentBookingArgs, Booking } from '../../src/types/appsync'
 
