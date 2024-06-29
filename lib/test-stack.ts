@@ -64,7 +64,7 @@ interface TestStackProps extends StackProps {
 
       const lambdaDataSource = new appsync.LambdaDataSource(this, 'MyLambdaDataSource', {
         api,
-        lambdaFunction: lambdaFn,
+        lambdaFunction: bookingLambda,
         description: 'description',
         name: 'name',
         // serviceRole: role,
