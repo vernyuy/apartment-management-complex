@@ -16,6 +16,7 @@ import { aws_iam } from "aws-cdk-lib";
 import * as ddb from "aws-cdk-lib/aws-dynamodb";
 import { Construct } from "constructs";
 import * as appsync from "aws-cdk-lib/aws-appsync";
+import * as iam from "aws-cdk-lib/aws-iam";
 import { Table } from "aws-cdk-lib/aws-dynamodb";
 import { bundleAppSyncResolver } from "./helpers";
 import { join } from "path";
@@ -32,6 +33,30 @@ interface TestStackProps extends StackProps {
     
         const { api, tableName } = props;
 
+        const lambdaRole = new iam.Role(this, 'LambdaExecutionRole', {
+            assumedBy: new iam.ServicePrincipal('lambda.amazonaws.com'),
+          });
+      
+          lambdaRole.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName('service-role/AWSLambdaBasicExecutionRole'));
+      
+
+      const lambdaFn = new lambda.Function(this, 'AppSyncLambdaHandler', {
+        runtime: lambda.Runtime.NODEJS_20_X,
+        handler: 'index.handler',
+        code: lambda.Code.fromAsset(path.join(__dirname, './lambda-fns')),
+        role: lambdaRole,
+      });
+    const lambdaDs = api.addLambdaDataSource('lambdaDatasource', lambdaFn);
+
+    lambdaDs.createResolver("res",{
+        typeName: 'Query',
+        fieldName: 'getItem',
+      });
+  
+      lambdaDs.createResolver("mutRes",{
+        typeName: 'Mutation',
+        fieldName: 'createApartmentBooking',
+      });
     //       const dlq = new sqs.Queue(this, "DeadLetterQueue");
     // const queue = new sqs.Queue(this, "bookingQueue", {
     //   deadLetterQueue: {
@@ -56,11 +81,6 @@ interface TestStackProps extends StackProps {
     //     }
     //   );
 
-      const lambdaFn = new lambda.Function(this, 'AppSyncLambdaHandler', {
-        runtime: lambda.Runtime.NODEJS_20_X,
-        handler: 'index.handler',
-        code: lambda.Code.fromAsset(path.join(__dirname, './lambda-fns')),
-      });
 
     //   const lambdaFn = new lambda.Function(this, 'AppSyncLambdaHandler', {
     //     runtime: lambda.Runtime.NODEJS_20_X,
@@ -68,8 +88,6 @@ interface TestStackProps extends StackProps {
     //     code: lambda.Code.fromAsset(path.join(__dirname, './lambda-fns')),
     //   });
 
-
-    const lambdaDs = api.addLambdaDataSource('lambdaDatasource', lambdaFn);
 
     //   const lambdaDataSource = new appsync.LambdaDataSource(this, 'MyLambdaDataSource', {
     //     api,
@@ -91,15 +109,6 @@ interface TestStackProps extends StackProps {
     //       dataSource: lambdaDataSource,
     //     }
     //   );
-    lambdaDs.createResolver("res",{
-        typeName: 'Query',
-        fieldName: 'getItem',
-      });
-  
-      lambdaDs.createResolver("mutRes",{
-        typeName: 'Mutation',
-        fieldName: 'createApartmentBooking',
-      });
   
 
 
