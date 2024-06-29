@@ -6,7 +6,8 @@ import { DdbStreamLamdaStacks } from "./ddb-stream-lambda-stack";
 import { RatingsAndFeedbackStack } from "./ratings-feedback-stack";
 import { Stage, StageProps } from "aws-cdk-lib";
 import { Construct } from "constructs";
-import { BookingStack } from "./booking-stack";
+import { BookingStacks } from "./booking-stack";
+import { TestStack } from "./test-stack";
 
 export class PipelineStage extends Stage {
   constructor(scope: Construct, id: string, props: StageProps) {
@@ -34,9 +35,10 @@ export class PipelineStage extends Stage {
       acmsGraphqlApi: acmsSharedStack.acmsGraphqlApi,
     });
 
-    const bookingStack = new BookingStack(this, "BookingStack", {
+    const bookingStack = new TestStack(this, "TestStack", {
       tableName: acmsSharedStack.acmsDatabase.tableName,
       api: acmsSharedStack.acmsGraphqlApi,
+      // apiSchema: acmsSharedStack.apiSchema,
     });
 
     // new DdbStreamLamdaStacks(this, "DdbStreamLambdaStacks", {
