@@ -11,6 +11,7 @@ import {
   Table,
 } from "aws-cdk-lib/aws-dynamodb";
 import { readFileSync } from "fs";
+import { TestStack } from "./test-stack";
 
 export class AcmsSharedStack extends Stack {
   public readonly acmsDatabase: Table;
@@ -123,7 +124,10 @@ export class AcmsSharedStack extends Stack {
       projectionType: ProjectionType.ALL,
     });
 
-
+// new TestStack(this, "TestStack",{
+//     tableName: this.acmsDatabase.tableName,
+//     api:this.acmsGraphqlApi
+// })
     /**
      * Outputs
      */

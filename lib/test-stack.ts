@@ -32,29 +32,29 @@ interface TestStackProps extends StackProps {
     
         const { api, tableName } = props;
 
-          const dlq = new sqs.Queue(this, "DeadLetterQueue");
-    const queue = new sqs.Queue(this, "bookingQueue", {
-      deadLetterQueue: {
-        queue: dlq,
-        maxReceiveCount: 10,
-      },
-    });
+    //       const dlq = new sqs.Queue(this, "DeadLetterQueue");
+    // const queue = new sqs.Queue(this, "bookingQueue", {
+    //   deadLetterQueue: {
+    //     queue: dlq,
+    //     maxReceiveCount: 10,
+    //   },
+    // });
 
-    const bookingLambda: NodejsFunction = new NodejsFunction(
-        this,
-        "AcmsBookingHandler",
-        {
-          tracing: Tracing.ACTIVE,
-          runtime: lambda.Runtime.NODEJS_16_X,
-          handler: "handler",
-          entry: path.join(__dirname, "lambda-fns/booking", "app.ts"),
-          memorySize: 1024,
-          environment:{
-            BOOKING_QUEUE_URL: queue.queueUrl,
-            ACMS_DB: tableName,
-          }
-        }
-      );
+    // const bookingLambda: NodejsFunction = new NodejsFunction(
+    //     this,
+    //     "AcmsBookingHandler",
+    //     {
+    //       tracing: Tracing.ACTIVE,
+    //       runtime: lambda.Runtime.NODEJS_16_X,
+    //       handler: "handler",
+    //       entry: path.join(__dirname, "lambda-fns/booking", "app.ts"),
+    //       memorySize: 1024,
+    //       environment:{
+    //         BOOKING_QUEUE_URL: queue.queueUrl,
+    //         ACMS_DB: tableName,
+    //       }
+    //     }
+    //   );
 
       const lambdaFn = new lambda.Function(this, 'AppSyncLambdaHandler', {
         runtime: lambda.Runtime.NODEJS_20_X,
@@ -62,13 +62,22 @@ interface TestStackProps extends StackProps {
         code: lambda.Code.fromAsset(path.join(__dirname, './lambda-fns')),
       });
 
-      const lambdaDataSource = new appsync.LambdaDataSource(this, 'MyLambdaDataSource', {
-        api,
-        lambdaFunction: bookingLambda,
-        description: 'description',
-        name: 'name',
-        // serviceRole: role,
-      });
+    //   const lambdaFn = new lambda.Function(this, 'AppSyncLambdaHandler', {
+    //     runtime: lambda.Runtime.NODEJS_20_X,
+    //     handler: 'index.handler',
+    //     code: lambda.Code.fromAsset(path.join(__dirname, './lambda-fns')),
+    //   });
+
+
+    const lambdaDs = api.addLambdaDataSource('lambdaDatasource', lambdaFn);
+
+    //   const lambdaDataSource = new appsync.LambdaDataSource(this, 'MyLambdaDataSource', {
+    //     api,
+    //     lambdaFunction: bookingLambda,
+    //     description: 'description',
+    //     name: 'name',
+    //     // serviceRole: role,
+    //   });
   
     //   const lambdaDataSource = api.addLambdaDataSource( 'lambda-data-source', lambdaFn);
 
@@ -82,12 +91,22 @@ interface TestStackProps extends StackProps {
     //       dataSource: lambdaDataSource,
     //     }
     //   );
-
-
-      const lambdaResolver = lambdaDataSource.createResolver('mutation-resolver', {
+    lambdaDs.createResolver("res",{
+        typeName: 'Query',
+        fieldName: 'getItem',
+      });
+  
+      lambdaDs.createResolver("mutRes",{
         typeName: 'Mutation',
         fieldName: 'createApartmentBooking',
-        
       });
+  
+
+
+    //   const lambdaResolver = lambdaDataSource.createResolver('mutation-resolver', {
+    //     typeName: 'Mutation',
+    //     fieldName: 'createApartmentBooking',
+        
+    //   });
     }
   }
