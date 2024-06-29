@@ -125,22 +125,17 @@ export class AcmsSharedStack extends Stack {
       projectionType: ProjectionType.ALL,
     });
 
-    const lambdaFn = new lambda.Function(this, 'AppSyncLambdaHandler', {
-      runtime: lambda.Runtime.NODEJS_20_X,
-      handler: 'index.handler',
-      code: lambda.Code.fromAsset(path.join(__dirname, './lambda-fns'))
-    });
-  const lambdaDs = this.acmsGraphqlApi.addLambdaDataSource('lambdaDatasource', lambdaFn);
-
-  // lambdaDs.createResolver("res",{
-  //     typeName: 'Query',
-  //     fieldName: 'getItem',
+  //   const lambdaFn = new lambda.Function(this, 'AppSyncLambdaHandler', {
+  //     runtime: lambda.Runtime.NODEJS_20_X,
+  //     handler: 'index.handler',
+  //     code: lambda.Code.fromAsset(path.join(__dirname, './lambda-fns'))
   //   });
+  // const lambdaDs = this.acmsGraphqlApi.addLambdaDataSource('lambdaDatasource', lambdaFn);
 
-    lambdaDs.createResolver("mutRes",{
-      typeName: 'Mutation',
-      fieldName: 'createApartmentBooking',
-    });
+  //   lambdaDs.createResolver("mutRes",{
+  //     typeName: 'Mutation',
+  //     fieldName: 'createApartmentBooking',
+  //   });
 
 // new TestStack(this, "TestStack",{
 //     tableName: this.acmsDatabase.tableName,

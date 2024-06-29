@@ -44,15 +44,9 @@ interface TestStackProps extends StackProps {
         runtime: lambda.Runtime.NODEJS_20_X,
         handler: 'index.handler',
         code: lambda.Code.fromAsset(path.join(__dirname, './lambda-fns')),
-        role: lambdaRole,
       });
     const lambdaDs = api.addLambdaDataSource('lambdaDatasource', lambdaFn);
 
-    lambdaDs.createResolver("res",{
-        typeName: 'Query',
-        fieldName: 'getItem',
-      });
-  
       lambdaDs.createResolver("mutRes",{
         typeName: 'Mutation',
         fieldName: 'createApartmentBooking',
