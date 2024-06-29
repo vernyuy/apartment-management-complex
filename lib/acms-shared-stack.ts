@@ -132,10 +132,10 @@ export class AcmsSharedStack extends Stack {
     });
   const lambdaDs = this.acmsGraphqlApi.addLambdaDataSource('lambdaDatasource', lambdaFn);
 
-  lambdaDs.createResolver("res",{
-      typeName: 'Query',
-      fieldName: 'getItem',
-    });
+  // lambdaDs.createResolver("res",{
+  //     typeName: 'Query',
+  //     fieldName: 'getItem',
+  //   });
 
     lambdaDs.createResolver("mutRes",{
       typeName: 'Mutation',
