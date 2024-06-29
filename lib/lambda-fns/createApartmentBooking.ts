@@ -1,16 +1,14 @@
 import { Logger } from "@aws-lambda-powertools/logger";
 import {  DynamoDB, SQS } from "aws-sdk";
-import { uuid } from "../../utils";
-import CreateBookingInput from "./CreateBookingInput";
-import { BookingEntity } from "./entities/bookingEntity";
-import { MutationCreateApartmentBookingArgs, Booking } from '../../../src/types/appsync'
+import { uuid } from "../utils";
+import { MutationCreateApartmentBookingArgs, Booking } from '../../src/types/appsync'
 
-import { createItem } from "../../../src/lib/helpers";
+import { createItem } from "../../src/lib/helpers";
 
-async function createApartmentBooking(
+export const handler = async(
   appsyncInput: MutationCreateApartmentBookingArgs,
   logger: Logger
-): Promise<boolean> {
+): Promise<boolean> => {
   const documentClient = new DynamoDB.DocumentClient();
   let tableName = process.env.ACMS_DB;
   const BOOKING_QUEUE_URL = process.env.BOOKING_QUEUE_URL;
@@ -69,4 +67,3 @@ async function createApartmentBooking(
       }
 }
 
-export default createApartmentBooking;

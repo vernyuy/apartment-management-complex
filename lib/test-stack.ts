@@ -42,7 +42,7 @@ interface TestStackProps extends StackProps {
 
       const lambdaFn = new lambda.Function(this, 'AppSyncLambdaHandler', {
         runtime: lambda.Runtime.NODEJS_20_X,
-        handler: 'index.handler',
+        handler: 'createApartmentBooking.handler',
         code: lambda.Code.fromAsset(path.join(__dirname, './lambda-fns')),
       });
     const lambdaDs = api.addLambdaDataSource('lambdaDatasource', lambdaFn);
@@ -51,13 +51,13 @@ interface TestStackProps extends StackProps {
         typeName: 'Mutation',
         fieldName: 'createApartmentBooking',
       });
-    //       const dlq = new sqs.Queue(this, "DeadLetterQueue");
-    // const queue = new sqs.Queue(this, "bookingQueue", {
-    //   deadLetterQueue: {
-    //     queue: dlq,
-    //     maxReceiveCount: 10,
-    //   },
-    // });
+          const dlq = new sqs.Queue(this, "DeadLetterQueue");
+    const queue = new sqs.Queue(this, "bookingQueue", {
+      deadLetterQueue: {
+        queue: dlq,
+        maxReceiveCount: 10,
+      },
+    });
 
     // const bookingLambda: NodejsFunction = new NodejsFunction(
     //     this,
