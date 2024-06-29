@@ -1,13 +1,7 @@
 {
-    "name": "my-lambda-function",
-    "version": "1.0.0",
-    "description": "",
-    "main": "index.js",
-    "scripts": {
-      "test": "echo \"Error: no test specified\" && exit 1"
-    },
     "dependencies": {
-        "aws-sdk": "^2.1588.0"
+        "@types/node": "^20.14.9",
+        "aws-sdk": "^2.1651.0",
+        "typescript": "^5.5.2"
     }
-  }
-  
+}
