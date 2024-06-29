@@ -11,7 +11,8 @@ import {
   Table,
 } from "aws-cdk-lib/aws-dynamodb";
 import { readFileSync } from "fs";
-import { TestStack } from "./test-stack";
+import * as lambda from "aws-cdk-lib/aws-lambda";
+import * as path from "path";
 
 export class AcmsSharedStack extends Stack {
   public readonly acmsDatabase: Table;
@@ -122,6 +123,23 @@ export class AcmsSharedStack extends Stack {
       },
 
       projectionType: ProjectionType.ALL,
+    });
+
+    const lambdaFn = new lambda.Function(this, 'AppSyncLambdaHandler', {
+      runtime: lambda.Runtime.NODEJS_20_X,
+      handler: 'index.handler',
+      code: lambda.Code.fromAsset(path.join(__dirname, './lambda-fns'))
+    });
+  const lambdaDs = this.acmsGraphqlApi.addLambdaDataSource('lambdaDatasource', lambdaFn);
+
+  lambdaDs.createResolver("res",{
+      typeName: 'Query',
+      fieldName: 'getItem',
+    });
+
+    lambdaDs.createResolver("mutRes",{
+      typeName: 'Mutation',
+      fieldName: 'createApartmentBooking',
     });
 
 // new TestStack(this, "TestStack",{
