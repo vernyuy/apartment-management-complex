@@ -56,12 +56,29 @@ interface TestStackProps extends StackProps {
         }
       );
 
-      const lambdaDataSource = api.addLambdaDataSource('lambda-data-source', bookingLambda);
-
-
-      const lambdaResolver = lambdaDataSource.createResolver('mutation-resolver', {
-        typeName: 'Mutation',
-        fieldName: 'createApartmentBooking',
+      const lambdaFn = new lambda.Function(this, 'AppSyncLambdaHandler', {
+        runtime: lambda.Runtime.NODEJS_20_X,
+        handler: 'index.handler',
+        code: lambda.Code.fromAsset(path.join(__dirname, './lambda-fns')),
       });
+  
+      const lambdaDataSource = api.addLambdaDataSource( 'lambda-data-source', lambdaFn);
+
+      const createApartmentBookingResolver: appsync.Resolver = new appsync.Resolver(
+        this,
+        "createApartmentBookingResolver",
+        {
+          api: api,
+          typeName: "Mutation",
+          fieldName: "createApartmentBooking",
+          dataSource: lambdaDataSource,
+        }
+      );
+
+
+    //   const lambdaResolver = lambdaDataSource.createResolver('mutation-resolver', {
+    //     typeName: 'Mutation',
+    //     fieldName: 'createApartmentBooking',
+    //   });
     }
   }
