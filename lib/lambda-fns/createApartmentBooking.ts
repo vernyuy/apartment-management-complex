@@ -40,7 +40,7 @@ export const handler = async(
   };
   const command = new SendMessageCommand(input);
 
-  logger.info(`create booking input info", ${JSON.stringify(bookingInput)}`);
+  console.log(`create booking input info", ${JSON.stringify(bookingInput)}`);
   // const params = {
   //   TableName: tableName,
   //   IndexName: "getAllApartmentsPerUser",
@@ -58,8 +58,8 @@ export const handler = async(
   //   },
   // };
 
-      logger.info(`sqs pre message ${JSON.stringify(bookingInput)}`);
-      logger.info(`sqs  queue url ${BOOKING_QUEUE_URL}`);
+      console.log(`sqs pre message ${JSON.stringify(bookingInput)}`);
+      console.log(`sqs  queue url ${BOOKING_QUEUE_URL}`);
       // const sqsParams: SQS.Types.SendMessageRequest = {
       //   MessageBody: JSON.stringify(bookingInput),
       //   QueueUrl: BOOKING_QUEUE_URL,
@@ -69,7 +69,7 @@ export const handler = async(
         const response = await sqsClient.send(command);
         return true;
       } catch (error) {
-        logger.info(`an error occured while sending message to sqs", ${error}`);
+        console.log(`an error occured while sending message to sqs", ${error}`);
         throw Error(`an error occured while sending message to sqs", ${error}`);
       }
 }
