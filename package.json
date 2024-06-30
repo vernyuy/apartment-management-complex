@@ -1,7 +1,6 @@
 {
   "name": "acms",
   "version": "0.1.0",
-  "module": "commonjs",
   "bin": {
     "acms": "bin/acms.js"
   },
