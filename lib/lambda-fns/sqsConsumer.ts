@@ -17,11 +17,12 @@ exports.handler = async (event: SQSEvent, context: Context) => {
         TableName: tableName,
         Item: bookingDetails,
       };
+      console.log{params}
       const command = new PutItemCommand(params);
       await client.send(command);
     } catch (error) {
       console.log(
-        `an error occured during put booking ${JSON.stringify(error)}`
+        `an error occured during put booking::::: ${error}`
       );
       failedMessageIds.push(value.messageId);
     }
