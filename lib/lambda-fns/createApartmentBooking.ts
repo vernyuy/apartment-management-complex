@@ -17,7 +17,7 @@ export const handler = async(
   const createdOn = Date.now().toString();
   const id: string =  'shdf0-3fjs-4r94wj'//uuidv4();
 
-  console.log(appsyncInput.input);
+  console.log(appsyncInput);
 
   // if (BOOKING_QUEUE_URL === undefined) {
   //   logger.error(`Couldn't get the queue url name`);
