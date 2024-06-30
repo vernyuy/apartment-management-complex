@@ -23,9 +23,9 @@ exports.handler = async (event: SQSEvent, context: Context) => {
         TableName: tableName,
         Item: bookingDetails,
       };
+      console.log(`put parameters for booking is ${JSON.stringify(params)}`);
       const command = new PutItemCommand(params);
       const response = await client.send(command);
-      console.log(`put parameters for booking is ${JSON.stringify(params)}`);
 
     } catch (error) {
       console.log(
