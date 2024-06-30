@@ -14,6 +14,7 @@ exports.handler = async (event: SQSEvent, context: Context) => {
   const promises = event.Records.map(async (value: SQSRecord) => {
     try {
       const bookingDetails = JSON.parse(value.body);
+      console.log(`booking details are ${JSON.stringify(bookingDetails)}`);
       if (tableName === undefined) {
         console.log(`Couldn't get the table name`);
         tableName = "AcmsDynamoDBDatabaseTable";
@@ -24,8 +25,8 @@ exports.handler = async (event: SQSEvent, context: Context) => {
       };
       const command = new PutItemCommand(params);
       const response = await client.send(command);
-
       console.log(`put parameters for booking is ${JSON.stringify(params)}`);
+
     } catch (error) {
       console.log(
         `an error occured during put booking ${JSON.stringify(error)}`
