@@ -1,8 +1,8 @@
 import { Logger } from "@aws-lambda-powertools/logger";
 import { SQSClient, SendMessageCommand } from "@aws-sdk/client-sqs";
 // import { v4 as uuidv4 } from 'uuid';
-import { MutationCreateApartmentBookingArgs } from '../../src/types/appsync'
-import { createItem } from "../../src/lib/helpers";
+// import { MutationCreateApartmentBookingArgs } from '../../src/types/appsync'
+// import { createItem } from "../../src/lib/helpers";
 
 
 const sqsClient = new SQSClient();
@@ -10,7 +10,7 @@ const sqsClient = new SQSClient();
   let tableName = process.env.ACMS_DB;
 
 export const handler = async(
-  appsyncInput: MutationCreateApartmentBookingArgs,
+  appsyncInput: any,
   logger: Logger
 ): Promise<boolean> => {
   
@@ -24,11 +24,11 @@ export const handler = async(
     throw Error("Couldn't get queue url");
   }
 
-  const bookingInput = createItem({
+  const bookingInput = {
     id: id,
     ...appsyncInput.input,
     createdOn,
-  });
+  };
   if (tableName === undefined) {
     logger.error(`Couldn't get the table name`);
     tableName = "AcmsDynamoDBTable";
