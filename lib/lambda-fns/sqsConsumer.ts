@@ -5,11 +5,8 @@ const client = new DynamoDBClient();
 let tableName = process.env.TABLE_NAME;
 
 exports.handler = async (event: SQSEvent, context: Context) => {
-  const failedMessageIds: string[] = [];
-
-  const promises = event.Records.map(async (value: SQSRecord) => {
     try {
-      const bookingDetails = JSON.parse(value.body);
+      const bookingDetails = JSON.parse(event.Records[0].body);
       if (tableName === undefined) {
         tableName = "AcmsDynamoDBDatabaseTable";
       }
@@ -24,17 +21,5 @@ exports.handler = async (event: SQSEvent, context: Context) => {
       console.log(
         `an error occured during put booking::::: ${error}`
       );
-      failedMessageIds.push(value.messageId);
     }
-  });
-  // execute all promises
-  await Promise.all(promises);
-
-  return {
-    batchItemFailures: failedMessageIds.map((id) => {
-      return {
-        itemIdentifier: id,
-      };
-    }),
-  };
 };
