@@ -14,7 +14,7 @@ import * as path from "path";
 import { NodejsFunction } from "aws-cdk-lib/aws-lambda-nodejs";
 import * as sqs from "aws-cdk-lib/aws-sqs";
 import { Tracing } from "aws-cdk-lib/aws-lambda";
-import * as appsync from "aws-cdk-lib/aws-appsync"
+import * as appsync from "aws-cdk-lib/aws-appsync";
 
 import {
   DynamoEventSource,

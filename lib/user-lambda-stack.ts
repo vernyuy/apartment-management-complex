@@ -17,14 +17,18 @@ export class UserLamdaStacks extends Stack {
     const acmsDataSource = acmsGraphqlApi.addDynamoDbDataSource(
       "acmsdbs",
       acmsDatabase
-    )
-    const acmsUserFunction = new appsync.AppsyncFunction(this, "createUserAccount", {
-      name: "createUserAccount",
-      api: acmsGraphqlApi,
-      dataSource: acmsDataSource,
-      code: bundleAppSyncResolver("src/resolvers/user/createUserAccount.ts"),
-      runtime: appsync.FunctionRuntime.JS_1_0_0,
-    });
+    );
+    const acmsUserFunction = new appsync.AppsyncFunction(
+      this,
+      "createUserAccount",
+      {
+        name: "createUserAccount",
+        api: acmsGraphqlApi,
+        dataSource: acmsDataSource,
+        code: bundleAppSyncResolver("src/resolvers/user/createUserAccount.ts"),
+        runtime: appsync.FunctionRuntime.JS_1_0_0,
+      }
+    );
 
     const getUserAccount = new appsync.AppsyncFunction(this, "getUserAccount", {
       name: "getUserAccount",
@@ -57,4 +61,3 @@ export class UserLamdaStacks extends Stack {
     });
   }
 }
-

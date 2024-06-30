@@ -10,7 +10,6 @@ import {
 } from "aws-cdk-lib/pipelines";
 
 export class AcmsStack extends Stack {
-
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
 

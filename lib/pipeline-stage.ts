@@ -6,7 +6,6 @@ import { DdbStreamLamdaStacks } from "./ddb-stream-lambda-stack";
 import { RatingsAndFeedbackStack } from "./ratings-feedback-stack";
 import { Stage, StageProps } from "aws-cdk-lib";
 import { Construct } from "constructs";
-import { BookingStacks } from "./booking-stack";
 import { TestStack } from "./test-stack";
 
 export class PipelineStage extends Stage {
@@ -47,6 +46,5 @@ export class PipelineStage extends Stage {
     // });
     // bookingStacks.addDependency(acmsSharedStack)
     // acmsSharedStack.addDependency(bookingStack)
-
   }
 }

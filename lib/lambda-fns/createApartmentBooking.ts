@@ -1,8 +1,7 @@
 import { Logger } from "@aws-lambda-powertools/logger";
-import { DynamoDBClient, PutItemCommand } from "@aws-sdk/client-dynamodb";
 import { SQSClient, SendMessageCommand } from "@aws-sdk/client-sqs";
 import { uuid } from "../utils";
-import { MutationCreateApartmentBookingArgs, Booking } from '../../src/types/appsync'
+import { MutationCreateApartmentBookingArgs } from '../../src/types/appsync'
 import { createItem } from "../../src/lib/helpers";
 
 
@@ -35,9 +34,9 @@ export const handler = async(
     tableName = "AcmsDynamoDBTable";
   }
 
-  const input = { // SendMessageRequest
-    QueueUrl: BOOKING_QUEUE_URL, // required
-    MessageBody: JSON.stringify(bookingInput), // required
+  const input = { 
+    QueueUrl: BOOKING_QUEUE_URL,
+    MessageBody: JSON.stringify(bookingInput),
   };
   const command = new SendMessageCommand(input);
 

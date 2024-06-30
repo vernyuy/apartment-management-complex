@@ -41,6 +41,5 @@ export class BuildingLamdaStacks extends Stack {
       runtime: appsync.FunctionRuntime.JS_1_0_0,
       pipelineConfig: [buildingFunction],
     });
-
   }
 }
