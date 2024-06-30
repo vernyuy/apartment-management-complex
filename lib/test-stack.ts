@@ -49,5 +49,7 @@ export class TestStack extends Stack {
       typeName: "Mutation",
       fieldName: "createApartmentBooking",
     });
+
+    queue.grantSendMessages(lambdaFn);
   }
 }
