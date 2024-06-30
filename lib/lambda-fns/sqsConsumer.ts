@@ -16,7 +16,7 @@ exports.handler = async (event: SQSEvent, context: Context) => {
       const bookingDetails = JSON.parse(value.body);
       if (tableName === undefined) {
         console.log(`Couldn't get the table name`);
-        tableName = "AcmsDynamoDBTable";
+        tableName = "AcmsDynamoDBDatabaseTable";
       }
       const params = {
         TableName: tableName,

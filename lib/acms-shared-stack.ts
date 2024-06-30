@@ -95,7 +95,6 @@ export class AcmsSharedStack extends Stack {
 
     this.acmsDatabase = new Table(this, "ACMSDynamoDbTable", {
       tableName: "AcmsDynamoDBDatabaseTable",
-
       partitionKey: {
         name: "PK",
         type: AttributeType.STRING,
