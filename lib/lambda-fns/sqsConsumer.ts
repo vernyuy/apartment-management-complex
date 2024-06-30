@@ -17,7 +17,7 @@ exports.handler = async (event: SQSEvent, context: Context) => {
         TableName: tableName,
         Item: bookingDetails,
       };
-      console.log{params}
+      console.log(params)
       const command = new PutItemCommand(params);
       await client.send(command);
     } catch (error) {
