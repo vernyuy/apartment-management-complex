@@ -26,7 +26,7 @@ export const handler = async(
 
   const bookingInput = {
     id: id,
-    ...appsyncInput.input,
+    ...appsyncInput.arguments.input,
     createdOn,
   };
   if (tableName === undefined) {

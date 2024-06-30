@@ -43,6 +43,15 @@ export class TestStack extends Stack {
         BOOKING_QUEUE_URL: queue.queueUrl,
       },
     });
+
+    const sqsConsumer = new lambda.Function(this, "sqsConsumer", {
+        runtime: lambda.Runtime.NODEJS_20_X,
+        handler: "sqsConsumer.handler",
+        code: lambda.Code.fromAsset(path.join(__dirname, "./lambda-fns")),
+        environment: {
+          BOOKING_QUEUE_URL: queue.queueUrl
+        },
+      });
     const lambdaDs = api.addLambdaDataSource("lambdaDatasource", lambdaFn);
 
     lambdaDs.createResolver("mutRes", {
@@ -51,5 +60,6 @@ export class TestStack extends Stack {
     });
 
     queue.grantSendMessages(lambdaFn);
+    queue.grantConsumeMessages(sqsConsumer)
   }
 }
