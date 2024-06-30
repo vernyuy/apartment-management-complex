@@ -19,10 +19,10 @@ export const handler = async(
 
   console.log(appsyncInput.input);
 
-  if (BOOKING_QUEUE_URL === undefined) {
-    logger.error(`Couldn't get the queue url name`);
-    throw Error("Couldn't get queue url");
-  }
+  // if (BOOKING_QUEUE_URL === undefined) {
+  //   logger.error(`Couldn't get the queue url name`);
+  //   throw Error("Couldn't get queue url");
+  // }
 
   const bookingInput = {
     id: id,
