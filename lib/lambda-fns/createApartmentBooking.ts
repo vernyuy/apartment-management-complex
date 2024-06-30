@@ -1,5 +1,7 @@
 import { Logger } from "@aws-lambda-powertools/logger";
-import { DynamoDB, SQS } from "aws-sdk";
+import { DynamoDBClient, PutItemCommand } from "@aws-sdk/client-dynamodb";
+import { SQSClient, SendMessageCommand } from "@aws-sdk/client-sqs";
+const sqsClient = new SQSClient();
 import { uuid } from "../utils";
 import { MutationCreateApartmentBookingArgs, Booking } from '../../src/types/appsync'
 
@@ -9,12 +11,12 @@ export const handler = async(
   appsyncInput: MutationCreateApartmentBookingArgs,
   logger: Logger
 ): Promise<boolean> => {
-  const documentClient = new DynamoDB.DocumentClient();
+  // const documentClient = new DynamoDB.DocumentClient();
   let tableName = process.env.ACMS_DB;
   const BOOKING_QUEUE_URL = process.env.BOOKING_QUEUE_URL;
   const createdOn = Date.now().toString();
   const id: string = uuid();
-  const sqs = new SQS();
+  // const sqs = new SQS();
 
   console.log(appsyncInput.input);
 
@@ -33,33 +35,39 @@ export const handler = async(
     tableName = "AcmsDynamoDBTable";
   }
 
-  logger.info(`create booking input info", ${JSON.stringify(bookingInput)}`);
-  const params = {
-    TableName: tableName,
-    IndexName: "getAllApartmentsPerUser",
-    KeyConditionExpression: "#GSI1PK = :GSI1PK AND #GSI1SK = :GSI1SK",
-    FilterExpression: "#bookingStatus = :bookingStatus",
-    ExpressionAttributeNames: {
-      "#GSI1PK": "GSI1PK",
-      "#GSI1SK": "GSI1SK",
-      "#bookingStatus": "bookingStatus",
-    },
-    ExpressionAttributeValues: {
-      ":GSI1PK": `USER#${appsyncInput.input.userId}`,
-      ":GSI1SK": `APARTMENT#${appsyncInput.input.apartmentId}`,
-      ":bookingStatus": "PENDING",
-    },
+  const input = { // SendMessageRequest
+    QueueUrl: BOOKING_QUEUE_URL, // required
+    MessageBody: JSON.stringify(bookingInput), // required
   };
+  const command = new SendMessageCommand(input);
+
+  logger.info(`create booking input info", ${JSON.stringify(bookingInput)}`);
+  // const params = {
+  //   TableName: tableName,
+  //   IndexName: "getAllApartmentsPerUser",
+  //   KeyConditionExpression: "#GSI1PK = :GSI1PK AND #GSI1SK = :GSI1SK",
+  //   FilterExpression: "#bookingStatus = :bookingStatus",
+  //   ExpressionAttributeNames: {
+  //     "#GSI1PK": "GSI1PK",
+  //     "#GSI1SK": "GSI1SK",
+  //     "#bookingStatus": "bookingStatus",
+  //   },
+  //   ExpressionAttributeValues: {
+  //     ":GSI1PK": `USER#${appsyncInput.input.userId}`,
+  //     ":GSI1SK": `APARTMENT#${appsyncInput.input.apartmentId}`,
+  //     ":bookingStatus": "PENDING",
+  //   },
+  // };
 
       logger.info(`sqs pre message ${JSON.stringify(bookingInput)}`);
       logger.info(`sqs  queue url ${BOOKING_QUEUE_URL}`);
-      const sqsParams: SQS.Types.SendMessageRequest = {
-        MessageBody: JSON.stringify(bookingInput),
-        QueueUrl: BOOKING_QUEUE_URL,
-      };
+      // const sqsParams: SQS.Types.SendMessageRequest = {
+      //   MessageBody: JSON.stringify(bookingInput),
+      //   QueueUrl: BOOKING_QUEUE_URL,
+      // };
 
       try {
-        await sqs.sendMessage(sqsParams).promise();
+        const response = await sqsClient.send(command);
         return true;
       } catch (error) {
         logger.info(`an error occured while sending message to sqs", ${error}`);
