@@ -5,6 +5,7 @@ import * as path from "path";
 import * as appsync from "aws-cdk-lib/aws-appsync";
 import * as iam from "aws-cdk-lib/aws-iam";
 import * as sqs from "aws-cdk-lib/aws-sqs";
+import * as lambdaEventSources from 'aws-cdk-lib/aws-lambda-event-sources';
 
 interface TestStackProps extends StackProps {
   api: appsync.GraphqlApi;
@@ -53,7 +54,10 @@ export class TestStack extends Stack {
         },
       });
     const lambdaDs = api.addLambdaDataSource("lambdaDatasource", lambdaFn);
+      
+    const eventSource = new lambdaEventSources.SqsEventSource(queue);
 
+    sqsConsumer.addEventSource(eventSource);
     lambdaDs.createResolver("mutRes", {
       typeName: "Mutation",
       fieldName: "createApartmentBooking",
