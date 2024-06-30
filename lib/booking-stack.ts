@@ -7,13 +7,13 @@ import * as iam from "aws-cdk-lib/aws-iam";
 import * as sqs from "aws-cdk-lib/aws-sqs";
 import * as lambdaEventSources from 'aws-cdk-lib/aws-lambda-event-sources';
 
-interface TestStackProps extends StackProps {
+interface BookingStackProps extends StackProps {
   api: appsync.GraphqlApi;
   tableName: string;
 }
 
-export class TestStack extends Stack {
-  constructor(scope: Construct, id: string, props: TestStackProps) {
+export class BookingStack extends Stack {
+  constructor(scope: Construct, id: string, props: BookingStackProps) {
     super(scope, id, props);
 
     const { api, tableName } = props;
