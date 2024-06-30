@@ -30,7 +30,7 @@ export const handler = async(
     createdOn,
   };
   if (tableName === undefined) {
-    logger.error(`Couldn't get the table name`);
+    // logger.error(`Couldn't get the table name`);
     tableName = "AcmsDynamoDBTable";
   }
 
