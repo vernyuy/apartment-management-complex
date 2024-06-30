@@ -1,22 +1,22 @@
 import { Logger } from "@aws-lambda-powertools/logger";
 import { DynamoDBClient, PutItemCommand } from "@aws-sdk/client-dynamodb";
 import { SQSClient, SendMessageCommand } from "@aws-sdk/client-sqs";
-const sqsClient = new SQSClient();
 import { uuid } from "../utils";
 import { MutationCreateApartmentBookingArgs, Booking } from '../../src/types/appsync'
-
 import { createItem } from "../../src/lib/helpers";
+
+
+const sqsClient = new SQSClient();
+  const BOOKING_QUEUE_URL = process.env.BOOKING_QUEUE_URL;
+  let tableName = process.env.ACMS_DB;
 
 export const handler = async(
   appsyncInput: MutationCreateApartmentBookingArgs,
   logger: Logger
 ): Promise<boolean> => {
-  // const documentClient = new DynamoDB.DocumentClient();
-  let tableName = process.env.ACMS_DB;
-  const BOOKING_QUEUE_URL = process.env.BOOKING_QUEUE_URL;
+  
   const createdOn = Date.now().toString();
   const id: string = uuid();
-  // const sqs = new SQS();
 
   console.log(appsyncInput.input);
 
