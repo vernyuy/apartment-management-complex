@@ -1,6 +1,6 @@
 import { Logger } from "@aws-lambda-powertools/logger";
 import { SQSClient, SendMessageCommand } from "@aws-sdk/client-sqs";
-import { uuid } from "../utils";
+import { v4 as uuidv4 } from 'uuid';
 import { MutationCreateApartmentBookingArgs } from '../../src/types/appsync'
 import { createItem } from "../../src/lib/helpers";
 
@@ -15,7 +15,7 @@ export const handler = async(
 ): Promise<boolean> => {
   
   const createdOn = Date.now().toString();
-  const id: string = uuid();
+  const id: string = uuidv4();
 
   console.log(appsyncInput.input);
 
